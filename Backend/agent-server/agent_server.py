@@ -9,11 +9,11 @@ CORS(app)
 
 @app.route('/GetPlanAssessment', methods=['POST'])
 def get_plan_assessment():
-    test = json.loads(request.get_json()['body'])
+    messageBody = json.loads(request.get_json()['body'])
     #scenarioEnv = agent_data_converter.OperatingPictureToScenarioEnvironment(request)
 
     targetIds = []
-    for entry in test['targetIdToDamage']['entries']:
+    for entry in messageBody['targetIdToDamage']['entries']:
        targetIds.append(entry['id'])
     #prediction = agent_model_driver.GeneratePrediction(self.model, scenarioEnv)
 
