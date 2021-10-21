@@ -1,0 +1,400 @@
+{
+  "actionAssessments": [
+    {
+      "actionTargetId": "DestroyerA",
+      "numMissilesLeft": 49,
+      "targetIdToCurrentDamage": {
+        "entries": [
+          {
+            "id": "CarrierA"
+          },
+          {
+            "id": "CarrierB"
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB"
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB"
+          }
+        ]
+      },
+      "targetIdToDesiredDamage": {
+        "entries": [
+          {
+            "id": "CarrierA",
+            "damage": 1
+          },
+          {
+            "id": "CarrierB",
+            "damage": 2
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB",
+            "damage": 2
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB",
+            "damage": 1
+          }
+        ]
+      }
+    },
+    {
+      "actionTargetId": "CarrierB",
+      "numMissilesLeft": 48,
+      "targetIdToCurrentDamage": {
+        "entries": [
+          {
+            "id": "CarrierA"
+          },
+          {
+            "id": "CarrierB",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB"
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB"
+          }
+        ]
+      },
+      "targetIdToDesiredDamage": {
+        "entries": [
+          {
+            "id": "CarrierA",
+            "damage": 1
+          },
+          {
+            "id": "CarrierB",
+            "damage": 2
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB",
+            "damage": 2
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB",
+            "damage": 1
+          }
+        ]
+      }
+    },
+    {
+      "actionTargetId": "CarrierA",
+      "numMissilesLeft": 47,
+      "targetIdToCurrentDamage": {
+        "entries": [
+          {
+            "id": "CarrierA",
+            "damage": 1
+          },
+          {
+            "id": "CarrierB",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB"
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB"
+          }
+        ]
+      },
+      "targetIdToDesiredDamage": {
+        "entries": [
+          {
+            "id": "CarrierA",
+            "damage": 1
+          },
+          {
+            "id": "CarrierB",
+            "damage": 2
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB",
+            "damage": 2
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB",
+            "damage": 1
+          }
+        ]
+      }
+    },
+    {
+      "actionTargetId": "DestroyerB",
+      "numMissilesLeft": 46,
+      "targetIdToCurrentDamage": {
+        "entries": [
+          {
+            "id": "CarrierA",
+            "damage": 1
+          },
+          {
+            "id": "CarrierB",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB",
+            "damage": 1
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB"
+          }
+        ]
+      },
+      "targetIdToDesiredDamage": {
+        "entries": [
+          {
+            "id": "CarrierA",
+            "damage": 1
+          },
+          {
+            "id": "CarrierB",
+            "damage": 2
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB",
+            "damage": 2
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB",
+            "damage": 1
+          }
+        ]
+      }
+    },
+    {
+      "actionTargetId": "CruiserB",
+      "numMissilesLeft": 45,
+      "targetIdToCurrentDamage": {
+        "entries": [
+          {
+            "id": "CarrierA",
+            "damage": 1
+          },
+          {
+            "id": "CarrierB",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB",
+            "damage": 1
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB",
+            "damage": 1
+          }
+        ]
+      },
+      "targetIdToDesiredDamage": {
+        "entries": [
+          {
+            "id": "CarrierA",
+            "damage": 1
+          },
+          {
+            "id": "CarrierB",
+            "damage": 2
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB",
+            "damage": 2
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB",
+            "damage": 1
+          }
+        ]
+      }
+    },
+    {
+      "actionTargetId": "CarrierB",
+      "numMissilesLeft": 44,
+      "targetIdToCurrentDamage": {
+        "entries": [
+          {
+            "id": "CarrierA",
+            "damage": 1
+          },
+          {
+            "id": "CarrierB",
+            "damage": 2
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB",
+            "damage": 1
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB",
+            "damage": 1
+          }
+        ]
+      },
+      "targetIdToDesiredDamage": {
+        "entries": [
+          {
+            "id": "CarrierA",
+            "damage": 1
+          },
+          {
+            "id": "CarrierB",
+            "damage": 2
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB",
+            "damage": 2
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB",
+            "damage": 1
+          }
+        ]
+      }
+    },
+    {
+      "actionTargetId": "DestroyerB",
+      "numMissilesLeft": 43,
+      "targetIdToCurrentDamage": {
+        "entries": [
+          {
+            "id": "CarrierA",
+            "damage": 1
+          },
+          {
+            "id": "CarrierB",
+            "damage": 2
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB",
+            "damage": 2
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB",
+            "damage": 1
+          }
+        ]
+      },
+      "targetIdToDesiredDamage": {
+        "entries": [
+          {
+            "id": "CarrierA",
+            "damage": 1
+          },
+          {
+            "id": "CarrierB",
+            "damage": 2
+          },
+          {
+            "id": "DestroyerA",
+            "damage": 1
+          },
+          {
+            "id": "DestroyerB",
+            "damage": 2
+          },
+          {
+            "id": "CruiserA"
+          },
+          {
+            "id": "CruiserB",
+            "damage": 1
+          }
+        ]
+      }
+    }
+  ]
+}
