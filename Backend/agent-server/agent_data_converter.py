@@ -2,8 +2,6 @@ from stable_baselines3.common.env_checker import check_env
 
 from scenario_env import ScenarioEnv
 
-import agent_pb2
-
 def OperatingPictureToScenarioEnvironment(operatingPicture):
     """
     Converts operating context from client to scenario environment agent can understand.
