@@ -11,6 +11,8 @@ python -m pip install --upgrade pip
 python -m pip install grpcio grpcio-tools
 ```
 
+This also assumes you've got NodeJS installed and already have latest dependencies installed under `frontend/`.
+
 Run the `generate_agent_server_client.py` script to auto-generate any client/server code to their respective frontend/backend directories.
 
 ## Smoke testing the agent server
