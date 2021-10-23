@@ -1,7 +1,19 @@
 import React from 'react';
-import './App.css';
 import ReactDOM from 'react-dom';
+
+import { Provider } from 'react-redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+
 import { Button, FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import './App.css';
+
+import { SimReducer, SIM_REDUCER_KEY } from './components/sim-reducers';
+
+const rootReducer = combineReducers({ [SIM_REDUCER_KEY]: SimReducer});
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
+document.title = "Team Two AI Sim";
 
 class NameForm extends React.Component<any, any> {
   constructor(props: any) {
@@ -118,7 +130,9 @@ class NameForm extends React.Component<any, any> {
 }
 
 ReactDOM.render(
-  <NameForm />,
+  <Provider store={store}>
+    <NameForm />
+  </Provider>,
   document.getElementById('root')
 );
 
