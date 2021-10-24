@@ -1,62 +1,55 @@
 import React from 'react';
 import './App.css';
 import ReactDOM from 'react-dom';
-import { Button, FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableRow, TextField } from '@mui/material';
 
 class NameForm extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      targets: 8,
-      attackers: 13
+      missiles: ''
     };
 
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(event: any) {
-    this.setState({ value: event.target.value });
+    this.setState({ missiles: event.target.value });
   }
 
   render() {
-    function createData(
-      name: string,
-      status: string,
-    ) {
-      return { name, status };
+    //Plug this missilesNum array into this line `{ships.map((row) => (` to dynamically update table rows
+    const missilesNum: string[] = [];
+    for (let k = 0; k < Number(this.state.missiles); k++) {
+      var displayVal = k + 1
+      missilesNum[k] = 'Ship ' + displayVal
     }
 
-    const rows = [
-      createData('Ship 1', 'None'),
-      createData('Ship 2', 'Disabled'),
-      createData('Ship 3', 'Disabled'),
-      createData('Ship 4', 'Destroyed'),
-      createData('Ship 5', 'Destroyed'),
-    ];
+    const ships = ['Ship 1', 'Ship 2', 'Ship 3', 'Ship 4', 'Ship 5', 'Ship 6']
     return (
       <div>
-        <form>
-          <TextField id="outlined-basic" label="Number of targets:" variant="outlined" margin="normal" value={this.state.targets} onChange={this.handleChange} />
-          <br />
-          <TextField id="outlined-basic" label="Number of attackers:" variant="outlined" margin="normal" value={this.state.attackers} onChange={this.handleChange} />
-          <br />
-          <Button variant="contained" onClick={() => { alert(this.state.targets + ' targets and ' + this.state.attackers + ' attackers') }}>Sumulate</Button>
-        </form>
+        <TextField
+          id="outlined-basic"
+          label="Number of missiles:"
+          variant="outlined"
+          margin="normal"
+          type="number"
+          value={this.state.missiles}
+          InputLabelProps={{ shrink: true }}
+          onChange={this.handleChange}
+        />
 
-        <TableContainer>
-          <Table aria-label="a dense table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Target</TableCell>
-                <TableCell>Status</TableCell>
-              </TableRow>
-            </TableHead>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableBody>
-              {rows.map((row) => (
+              {ships.map((row) => (
                 <TableRow
-                  key={row.name}
+                  key={row}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell>{row.name}</TableCell>
+                  <TableCell component="th" scope="row">
+                    {row}
+                  </TableCell>
                   <TableCell>
                     <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-label">Status</InputLabel>
@@ -64,7 +57,7 @@ class NameForm extends React.Component<any, any> {
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                       >
-                        <MenuItem>None</MenuItem>
+                        <MenuItem>No Damage</MenuItem>
                         <MenuItem>Disabled</MenuItem>
                         <MenuItem>Destroyed</MenuItem>
                       </Select>
@@ -75,6 +68,8 @@ class NameForm extends React.Component<any, any> {
             </TableBody>
           </Table>
         </TableContainer>
+        <br />
+        <Button variant="contained" onClick={() => { alert(this.state.missiles + ' missiles') }}>Simulate</Button>
       </div>
     );
   }
