@@ -185,5 +185,5 @@ while not done:
     action, _ = model.predict(sampleEnvObs)
     sampleEnvObs, reward, done, info = scenarioEnv.step(action)
     score+=reward
-    print('Score:{} Action:{} State:{}'.format(score, action, [sampleEnvObs["missles"],sampleEnvObs["expectedShipDamage"], sampleEnvObs["currentShipDamage"]]))
+    print('Score:{} Action:{} State:{}'.format(score, action, [sampleEnvObs["missles"], sampleEnvObs["currentShipDamage"], sampleEnvObs["assets"]]))
 scenarioEnv.close()
