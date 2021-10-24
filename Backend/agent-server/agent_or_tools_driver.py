@@ -3,17 +3,13 @@ from ortools.linear_solver import pywraplp
 
 def AllocateJetPairsToTargets(vehicleIds, minJetsPerSortie,
     targetTimeConstraints, targetIds, targetIdxSequence):
-    # Treating the sortie size constraint as a hard min/max for now
-    # (i.e. all sorties will have the same # jets,
-    # the cost will not vary based on if it meets this constraint or not).
-    combos = list(itertools.combinations(vehicleIds, minJetsPerSortie))
 
     # Create the cost matrix. For starters, this will be
     # numCombos-by-numTargets and the cost will simply be the max sortie time
     # for the target. Maybe to make things interesting we could vary cost
     # by whether it meets sortie size limits, jet combo restrictions, etc.
     costMatrix = []
-    for i in range(0, len(combos)):
+    for i in range(0, len(vehicleIds)):
         costRow = []
         for targetIdx in targetIdxSequence:
             targetId = targetIds[targetIdx]
@@ -22,7 +18,7 @@ def AllocateJetPairsToTargets(vehicleIds, minJetsPerSortie,
                 costRow.append(foundTimeConstraint['maxSortieTime'])
         costMatrix.append(costRow)
     
-    num_pairs = len(combos)
+    num_pairs = len(vehicleIds)
     num_tasks = len(costMatrix[0])
 
     # Solver
@@ -38,14 +34,15 @@ def AllocateJetPairsToTargets(vehicleIds, minJetsPerSortie,
             x[i, j] = solver.IntVar(0, 1, '')
 
     # Constraints
-    # Each pair is assigned to at most 1 task.
+    # Each jet is assigned to at most n tasks.
     for i in range(num_pairs):
-        solver.Add(solver.Sum([x[i, j] for j in range(num_tasks)]) <= 1)
+        solver.Add(solver.Sum([x[i, j] for j in range(num_tasks)]) <= 3)
 
-    # Each pair is assigned to exactly one task.
+    # Each task is assigned to exactly n jets.
     for j in range(num_tasks):
-        solver.Add(solver.Sum([x[i, j] for i in range(num_pairs)]) == 1)
+        solver.Add(solver.Sum([x[i, j] for i in range(num_pairs)]) == minJetsPerSortie)
 
+    
     # Objective
     objective_terms = []
     for i in range(num_pairs):
@@ -64,6 +61,6 @@ def AllocateJetPairsToTargets(vehicleIds, minJetsPerSortie,
                 # Test if x[i,j] is 1 (with tolerance for floating point arithmetic).
                 if x[i, j].solution_value() > 0.5:
                     print('Pair %s assigned to task %d.  Cost = %d' %
-                          (combos[i], j, costMatrix[i][j]))
+                          (vehicleIds[i], j, costMatrix[i][j]))
 
 
