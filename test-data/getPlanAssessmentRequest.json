@@ -1,13 +1,60 @@
 {
-    "numMissiles": 50,
-    "targetIdToDamage": { 
-        "entries":  [
-            {"id": "CarrierA", "damage": 1},
-            {"id": "CarrierB", "damage": 2},
-            {"id": "DestroyerA", "damage": 1},
-            {"id": "DestroyerB", "damage": 2},
-            {"id": "CruiserA", "damage": 0},
-            {"id": "CruiserB", "damage": 1}
-        ]
+    "body": {
+        "numMissiles": 50,
+        "targetIdToDamage": { 
+            "entries":  [
+                {"id": "Enemy Carrier A", "damage": 1},
+                {"id": "Enemy Carrier B", "damage": 2},
+                {"id": "Enemy Destroyer A", "damage": 1},
+                {"id": "Enemy Destroyer B", "damage": 2},
+                {"id": "Enemy Cruiser A", "damage": 0},
+                {"id": "Enemy Cruiser B", "damage": 1}
+            ]
+        },
+        "targetTimeConstraints": {
+            "entries":  [
+                {"id": "Enemy Carrier A", "maxSortieTime": 4},
+                {"id": "Enemy Carrier B", "maxSortieTime": 5},
+                {"id": "Enemy Destroyer A", "maxSortieTime": 4},
+                {"id": "Enemy Destroyer B", "maxSortieTime": 5},
+                {"id": "Enemy Cruiser A", "maxSortieTime": 6},
+                {"id": "Enemy Cruiser B", "maxSortieTime": 6}
+            ]
+        },
+        "minJetsPerSortie": 2,
+        "friendlyForces": {
+            "carriers": [
+                {
+                    "id": "Friendly Carrier 1",
+                    "squadrons": [
+                        {
+                            "id": "Squadron 1",
+                            "jetIds": ["Jet1", "Jet2", "Jet3", "Jet4"]
+                        },
+                        {
+                            "id": "Squadron 2",
+                            "jetIds": ["Jet5", "Jet6", "Jet7", "Jet8"]
+                        },
+                        {
+                            "id": "Squadron 3",
+                            "jetIds": ["Jet9", "Jet10", "Jet11", "Jet12"]
+                        }
+                    ]
+                },
+                {
+                    "id": "Friendly Carrier 2",
+                    "squadrons": [
+                        {
+                            "id": "Squadron 4",
+                            "jetIds": ["Jet12", "Jet13", "Jet14", "Jet15"]
+                        },
+                        {
+                            "id": "Squadron 5",
+                            "jetIds": ["Jet16", "Jet17", "Jet18", "Jet19"]
+                        }
+                    ]
+                }
+            ]
+        }
     }
 }
