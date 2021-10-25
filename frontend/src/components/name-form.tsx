@@ -1,13 +1,26 @@
 import React from "react";
+import { connect } from "react-redux";
 
 import { Button, FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 
-// Would like test-data to be in common area outside frontend/backend,
-// but React app doesn't allow imports outside its src area.
-import cannedRequestJson from '../test-data/getPlanAssessmentRequest.json';
+import { OperatingContext } from "../interfaces/operating-context";
+import { SimStoreState } from "../interfaces/sim-store-state";
+import { SIM_REDUCER_KEY } from "./sim-reducers";
 
-export class NameForm extends React.Component<any, any> {
-    constructor(props: any) {
+export interface StoreStateProps {
+  /**
+   * Current operating context.
+   */
+  operatingContext: OperatingContext;
+}
+
+/**
+ * Component props.
+ */
+export type NameFormProps = StoreStateProps;
+
+export class NameForm extends React.Component<NameFormProps, any> {
+    constructor(props: NameFormProps) {
       super(props);
       this.state = {
         targets: 8,
@@ -19,6 +32,34 @@ export class NameForm extends React.Component<any, any> {
   
     handleChange(event: any) {
       this.setState({ value: event.target.value });
+    }
+
+    /**
+     * Pop off a call to the backend to generate a new plan assessment.
+     * 
+     * @param {OperatingContext} operatingContext Operating context.
+     */
+    generatePlanAssessment(operatingContext: OperatingContext) {
+        // Think this is "supposed" to be hidden inside a client interface
+        // that is then called inside a store action.
+        // Not sure this is gonna be a huge point of contention.
+        fetch('http://localhost:5000/GetPlanAssessment', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+              'Allow': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(operatingContext)
+        })
+        .then(res => res.json())
+        .then(data => {
+            // enter you logic when the fetch is successful
+            console.log(data)
+        })
+        .catch(error => {
+            alert("Issue with calling server:" + error)
+        });
     }
   
     render() {
@@ -43,29 +84,9 @@ export class NameForm extends React.Component<any, any> {
             <br />
             <TextField id="outlined-basic" label="Number of attackers:" variant="outlined" margin="normal" value={this.state.attackers} onChange={this.handleChange} />
             <br />
-            <Button variant="contained" onClick={() => { 
-              alert(this.state.targets + ' targets and ' + this.state.attackers + ' attackers')
-  
-              fetch('http://localhost:5000/GetPlanAssessment', {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                  'Allow': 'application/json',
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(cannedRequestJson)
-              })
-                .then(res => res.json())
-                .then(data => {
-                // enter you logic when the fetch is successful
-                  console.log(data)
-                })
-                .catch(error => {
-                // enter your logic for when there is an error (ex. error toast)
-                console.log(error)
-                })
-            }
-            }>Sumulate</Button>
+            <Button variant="contained" onClick={() => this.generatePlanAssessment(this.props.operatingContext)}>
+              Simulate
+            </Button>
           </form>
   
           <TableContainer>
@@ -105,4 +126,18 @@ export class NameForm extends React.Component<any, any> {
     }
 }
 
-export default NameForm;
+/**
+ * Maps store state to component props.
+ * 
+ * @param {SimStoreState} state Store state.
+ * @returns {StoreStateProps} Store state props.
+ */
+const mapStoreToProps = (state: {
+  [SIM_REDUCER_KEY]: SimStoreState;
+}): StoreStateProps => {
+  return {
+    operatingContext: state[SIM_REDUCER_KEY].operatingContext,
+  }
+};
+
+export default connect(mapStoreToProps)(NameForm);

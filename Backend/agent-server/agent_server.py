@@ -14,15 +14,15 @@ model = PPO.load("ScenarioEnvironment")
 
 @app.route('/GetPlanAssessment', methods=['POST'])
 def get_plan_assessment():
-    messageBody = request.json['body']
-    if (isinstance(messageBody, str)):
+    operatingContext = request.json
+    if (isinstance(operatingContext, str)):
        # Not sure if this is required.
        # Sometimes what you get from the frontend is string,
        # but it might be if you do like `request.get_json()` vs `request.json`
        # or something before this.
-       messageBody = json.loads(messageBody)
+       operatingContext = json.loads(operatingContext)
 
-    scenarioEnv = agent_data_converter.OperatingContextToScenarioEnvironment(messageBody)
+    scenarioEnv = agent_data_converter.OperatingContextToScenarioEnvironment(operatingContext)
 
     #targetIds = []
     #for entry in messageBody['targetIdToDamage']['entries']:
