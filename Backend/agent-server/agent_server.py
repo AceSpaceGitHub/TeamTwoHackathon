@@ -24,19 +24,12 @@ def get_plan_assessment():
 
     scenarioEnv = agent_data_converter.OperatingContextToScenarioEnvironment(operatingContext)
 
-    #targetIds = []
-    #for entry in messageBody['targetIdToDamage']['entries']:
-    #   targetIds.append(entry['id'])
     prediction = agent_model_driver.GeneratePrediction(model, scenarioEnv)
-
-    # Subject to change. Not sure the final structure of the prediction
-    # and/or if original conversion will be needed.
-    # Currently assuming pairs of [actionType, targetIdx].
-    #prediction = [[0, 1], [1, 1], [1, 4], [1, 4], [1, 0]]
-    #targetIdxSequence = []
-    #for action in prediction:
-    #   targetIdxSequence.append(action[1])
-    #planAssessment = agent_data_converter.PredictionToPlanAssessment(prediction, targetIds)
+    
+    targetIds = []
+    for entry in operatingContext['intendedTargetIdToDamage']['entries']:
+       targetIds.append(entry['id'])
+    planAssessment = agent_data_converter.PredictionToPlanAssessment(prediction, targetIds)
 
     #vehicleIds = []
     #for carrier in messageBody['friendlyForces']['carriers']:
@@ -48,6 +41,4 @@ def get_plan_assessment():
     #jetsToTargetIdx = agent_or_tools_driver.AllocateJetPairsToTargets(
     #   vehicleIds, minJetsPerSortie, targetTimeConstraints, targetIds, targetIdxSequence)
 
-    # This is just to give it something to return for now.
-    # Client isn't hooked up to actually use this yet.
-    return jsonify([])
+    return planAssessment

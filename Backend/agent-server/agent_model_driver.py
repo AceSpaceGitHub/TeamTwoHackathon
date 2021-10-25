@@ -1,3 +1,5 @@
+import copy
+
 from scenario_env import ScenarioEnv
 
 def GeneratePrediction(model, scenarioEnv: ScenarioEnv):
@@ -14,8 +16,9 @@ def GeneratePrediction(model, scenarioEnv: ScenarioEnv):
         action, _ = model.predict(sampleEnvObs)
         sampleEnvObs, reward, done, _ = scenarioEnv.step(action)
         score+=reward
-        print('Score:{} Action:{} State:{}'.format(score, action, [sampleEnvObs["missles"], sampleEnvObs["currentShipDamage"], sampleEnvObs["assets"]]))
-        prediction.append([action, [sampleEnvObs["missles"], sampleEnvObs["currentShipDamage"], sampleEnvObs["assets"]]])
+        recordedObs = copy.deepcopy(sampleEnvObs)
+        print('Score:{} Action:{} State:{}'.format(score, action, [recordedObs["missles"], recordedObs["currentShipDamage"], recordedObs["assets"]]))
+        prediction.append([action, [recordedObs["missles"], recordedObs["currentShipDamage"], recordedObs["assets"]]])
     scenarioEnv.close()
 
     return prediction

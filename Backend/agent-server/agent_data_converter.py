@@ -32,6 +32,46 @@ def OperatingContextToScenarioEnvironment(operatingContext):
 
 def PredictionToPlanAssessment(prediction, targetIds):
     """
-    Converts agent observation space to prediction results client expects.
+    Converts prediction results to plan assessment client expects.
     """
-    return []
+    sortieActions = []
+    resultingStates = []
+    for step in prediction:
+        actionTaken = step[0]
+        actionMidIdx = len(actionTaken) // 2
+
+        targettedIds = []
+        for i in range(0, actionMidIdx):
+            targettedIds.append(targetIds[actionTaken[i]])
+
+        missileLoadouts = []
+        for i in range(actionMidIdx, len(actionTaken)):
+            missileLoadouts.append(str(actionTaken[i]))
+
+        sortieActions.append({
+            'targetIds': targettedIds,
+            'missileLoadouts': missileLoadouts
+        })
+
+        stateContents = step[1]
+        numMissiles = stateContents[0]
+
+        targetIdToDamage = {}
+        targetIdxToDamage = stateContents[1]
+        for targetIdx in range(0, len(targetIdxToDamage)):
+            targetIdToDamage[targetIds[targetIdx]] = str(targetIdxToDamage[targetIdx])
+
+        numJets = stateContents[2][0]
+        numPilots = stateContents[2][1]
+
+        resultingStates.append({
+            'numMissiles': str(numMissiles),
+            'numJets': str(numJets),
+            'numPilots': str(numPilots),
+            'targetIdToDamage': targetIdToDamage
+        })
+
+    return {
+        'sortieActions': sortieActions,
+        'resultingStates': resultingStates
+    }
