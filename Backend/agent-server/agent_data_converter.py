@@ -2,15 +2,26 @@ from stable_baselines3.common.env_checker import check_env
 
 from scenario_env import ScenarioEnv
 
-def OperatingPictureToScenarioEnvironment(operatingPicture):
+def OperatingContextToScenarioEnvironment(operatingContext):
     """
-    Converts operating context from client to scenario environment agent can understand.
+    Converts operating context (aka JSON dictionary) from client
+    to scenario environment agent can understand.
     """
-    numMissiles = operatingPicture.numMissiles
+
+    # We anticipate using num jets/pilots, just the scenario
+    # doesn't officially take them in yet.
+    numJets = 0
+    numPilots = 0
+    numMissiles = 0
+    for carrier in operatingContext['friendlyForces']['carriers']:
+        for squadron in carrier['squadrons']:
+            numJets += len(squadron['jetIds'])
+            numPilots += len(squadron['pilotIds'])
+            numMissiles += len(squadron['missileIds'])
 
     desiredDamages = []
-    for entry in operatingPicture.targetIdToDamage.entries:
-        desiredDamages.append(entry.damage)
+    for entry in operatingContext['intendedTargetIdToDamage']['entries']:
+        desiredDamages.append(entry['damage'])
     
     scenarioEnv = ScenarioEnv(numMissiles,
         desiredDamages[0], desiredDamages[1], desiredDamages[2],
@@ -21,33 +32,46 @@ def OperatingPictureToScenarioEnvironment(operatingPicture):
 
 def PredictionToPlanAssessment(prediction, targetIds):
     """
-    Converts agent observation space to prediction results client expects.
+    Converts prediction results to plan assessment client expects.
     """
-    maxTargetIdx = (len(targetIds))
-    actionAssessments = []
+    sortieActions = []
+    resultingStates = []
     for step in prediction:
-        # Data in the action "column" is 1-based,
-        # normalize to 0-based to access the intended ID.
-        targetIdx = step[0] - 1
-        actionTargetId = targetIds[targetIdx]
-        numMissilesLeft = step[1][0]
+        actionTaken = step[0]
+        actionMidIdx = len(actionTaken) // 2
 
-        desiredDamages = step[1][1:maxTargetIdx+1]
-        desiredDamageEntries = []
-        for index, item in enumerate(desiredDamages):
-            desiredDamageEntries.append(
-                agent_pb2.TargetIdToDamageEntry(id=targetIds[index], damage=item))
+        targettedIds = []
+        for i in range(0, actionMidIdx):
+            targettedIds.append(targetIds[actionTaken[i]])
 
-        currentDamages = step[1][maxTargetIdx + 1:2*maxTargetIdx+1]
-        currentDamageEntries = []
-        for index, item in enumerate(currentDamages):
-            currentDamageEntries.append(
-                agent_pb2.TargetIdToDamageEntry(id=targetIds[index], damage=item))
+        missileLoadouts = []
+        for i in range(actionMidIdx, len(actionTaken)):
+            missileLoadouts.append(str(actionTaken[i]))
 
-        actionAssessment = agent_pb2.ActionAssessment(
-            actionTargetId=actionTargetId, numMissilesLeft=numMissilesLeft,
-            targetIdToCurrentDamage=agent_pb2.TargetToDamageMap(entries=currentDamageEntries),
-            targetIdToDesiredDamage=agent_pb2.TargetToDamageMap(entries=desiredDamageEntries))
-        actionAssessments.append(actionAssessment)
+        sortieActions.append({
+            'targetIds': targettedIds,
+            'missileLoadouts': missileLoadouts
+        })
 
-    return agent_pb2.PlanAssessment(actionAssessments=actionAssessments)
+        stateContents = step[1]
+        numMissiles = stateContents[0]
+
+        targetIdToDamage = {}
+        targetIdxToDamage = stateContents[1]
+        for targetIdx in range(0, len(targetIdxToDamage)):
+            targetIdToDamage[targetIds[targetIdx]] = str(targetIdxToDamage[targetIdx])
+
+        numJets = stateContents[2][0]
+        numPilots = stateContents[2][1]
+
+        resultingStates.append({
+            'numMissiles': str(numMissiles),
+            'numJets': str(numJets),
+            'numPilots': str(numPilots),
+            'targetIdToDamage': targetIdToDamage
+        })
+
+    return {
+        'sortieActions': sortieActions,
+        'resultingStates': resultingStates
+    }

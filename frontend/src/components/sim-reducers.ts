@@ -2,7 +2,11 @@ import producer from 'immer';
 import { WritableDraft } from 'immer/dist/internal';
 
 import { SimStoreState } from "../interfaces/sim-store-state";
-import { BaseActionPayload, UpdateActionsPayload, UpdateOperatingContextPayload, UPDATE_ACTIONS, UPDATE_OPERATING_CONTEXT } from "./sim-actions";
+import { BaseActionPayload, UpdateOperatingContextPayload, UpdatePlanAssessmentPayload, UPDATE_OPERATING_CONTEXT, UPDATE_PLAN_ASSESSMENT } from "./sim-actions";
+
+// Would like test-data to be in common area outside frontend/backend,
+// but React app doesn't allow imports outside its src area.
+import cannedOperatingContext from '../test-data/getPlanAssessmentRequest.json';
 
 /**
  * Sim reducer key.
@@ -13,11 +17,8 @@ export const SIM_REDUCER_KEY = "SimReducer";
  * Initial store state.
  */
 export const initialSimStoreState: SimStoreState = {
-    actions: [],
-    operatingContext: {
-        numMissiles: 0,
-        intendedTargetDamage: {},
-    }
+    planAssessment: null,
+    operatingContext: cannedOperatingContext,
 };
 
 /**
@@ -33,12 +34,12 @@ export const SimReducer = (
 ): SimStoreState => {
     return producer(state, (draft) => {
         switch (action.type) {
-            case UPDATE_ACTIONS: {
-                handleUpdateActions(draft, action as UpdateActionsPayload)
-                break;
-            }
             case UPDATE_OPERATING_CONTEXT: {
                 handleUpdateOperatingContext(draft, action as UpdateOperatingContextPayload)
+                break;
+            }
+            case UPDATE_PLAN_ASSESSMENT: {
+                handleUpdatePlanAssessment(draft, action as UpdatePlanAssessmentPayload)
                 break;
             }
             default: {
@@ -49,16 +50,6 @@ export const SimReducer = (
 }
 
 /**
- * Handles update actions payload.
- * 
- * @param {WritableDraft<SimStoreState>} draft Current draft state of store.
- * @param {UpdateActionsPayload} payload Payload.
- */
-const handleUpdateActions = (draft: WritableDraft<SimStoreState>, payload: UpdateActionsPayload): void => {
-    draft.actions = payload.actions;
-}
-
-/**
  * Handles update operating context payload.
  * 
  * @param {WritableDraft<SimStoreState>} draft Current draft state of store.
@@ -66,4 +57,14 @@ const handleUpdateActions = (draft: WritableDraft<SimStoreState>, payload: Updat
  */
 const handleUpdateOperatingContext = (draft: WritableDraft<SimStoreState>, payload: UpdateOperatingContextPayload) : void => {
     draft.operatingContext = payload.operatingContext;
+}
+
+/**
+ * Handles update plan assessment payload.
+ * 
+ * @param {WritableDraft<SimStoreState>} draft Current draft state of store.
+ * @param {UpdatePlanAssessmentPayload} payload Payload.
+ */
+ const handleUpdatePlanAssessment = (draft: WritableDraft<SimStoreState>, payload: UpdatePlanAssessmentPayload): void => {
+    draft.planAssessment = payload.planAssessment;
 }
