@@ -56,5 +56,5 @@ export interface PlanAssessment {
      * Expected to be same size as sortie actions,
       * so this is a parallel array to that.
      */
-    resultingState: SortieState[];
+    resultingStates: SortieState[];
 }

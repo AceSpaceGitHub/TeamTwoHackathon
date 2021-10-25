@@ -6,6 +6,8 @@ import { Button, FormControl, InputLabel, MenuItem, Select, Table, TableBody, Ta
 import { OperatingContext } from "../interfaces/operating-context";
 import { SimStoreState } from "../interfaces/sim-store-state";
 import { SIM_REDUCER_KEY } from "./sim-reducers";
+import { PlanAssessment } from "../interfaces/plan-assessment";
+import { updatePlanAssessment } from "./sim-actions";
 
 export interface StoreStateProps {
   /**
@@ -14,10 +16,19 @@ export interface StoreStateProps {
   operatingContext: OperatingContext;
 }
 
+export interface DispatchProps {
+  /**
+   * Updates latest plan assessment.
+   * 
+   * @param {PlanAssessment} planAssessment Plan assessment.
+   */
+  updatePlanAssessment: (planAssessment: PlanAssessment) => void;
+}
+
 /**
  * Component props.
  */
-export type NameFormProps = StoreStateProps;
+export type NameFormProps = StoreStateProps & DispatchProps;
 
 export class NameForm extends React.Component<NameFormProps, any> {
     constructor(props: NameFormProps) {
@@ -54,8 +65,8 @@ export class NameForm extends React.Component<NameFormProps, any> {
         })
         .then(res => res.json())
         .then(data => {
-            // enter you logic when the fetch is successful
-            console.log(data)
+            const planAssessment = data as PlanAssessment;
+            this.props.updatePlanAssessment(planAssessment);
         })
         .catch(error => {
             alert("Issue with calling server:" + error)
@@ -140,4 +151,16 @@ const mapStoreToProps = (state: {
   }
 };
 
-export default connect(mapStoreToProps)(NameForm);
+/**
+ * Maps store dispatches to component props.
+ * 
+ * @param {any} dispatch Dispatch object.
+ * @returns {DispatchProps} Store dispatch props.
+ */
+const mapDispatchToProps = (dispatch: any): DispatchProps => {
+  return {
+    updatePlanAssessment: (planAssessment: PlanAssessment): void => dispatch(updatePlanAssessment(planAssessment)),
+  }
+}
+
+export default connect(mapStoreToProps, mapDispatchToProps)(NameForm);
