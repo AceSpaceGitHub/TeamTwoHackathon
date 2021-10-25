@@ -40,7 +40,7 @@
                         },
                         {
                             "id": "Squadron 3",
-                            "jetIds": ["Jet9", "Jet10", "Jet11", "Jet12"],
+                            "jetIds": ["Jet9", "Jet10", "Jet11"],
                             "pilotIds": ["Pilot11", "Pilot12", "Pilot13", "Pilot14"],
                             "missileIds": ["Missile6", "Missile7", "Missile8"]
                         }

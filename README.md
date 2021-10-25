@@ -23,6 +23,6 @@ python -m flask run
 Once the server is running, you can test it directly by `curl`'ing request files to it. The latest example of the expected request structure lives in this repo's `test-data` directory. Here's an example of how to use it via cmd terminal (PowerShell doesn't seem to like the `@` symbol...):
 
 ```
-cd test-data/
+cd frontend/src/test-data
 curl -X POST -H "Content-Type: application/json" -d @./getPlanAssessmentRequest.json localhost:5000/GetPlanAssessment > getPlanAssessmentResponse.json
 ```
