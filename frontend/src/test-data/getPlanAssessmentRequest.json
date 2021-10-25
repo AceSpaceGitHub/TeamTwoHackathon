@@ -12,12 +12,12 @@
         },
         "targetTimeConstraints": {
             "entries":  [
-                {"id": "Enemy Carrier A", "maxSortieTime": 4},
-                {"id": "Enemy Carrier B", "maxSortieTime": 5},
-                {"id": "Enemy Destroyer A", "maxSortieTime": 4},
-                {"id": "Enemy Destroyer B", "maxSortieTime": 5},
-                {"id": "Enemy Cruiser A", "maxSortieTime": 6},
-                {"id": "Enemy Cruiser B", "maxSortieTime": 6}
+                {"id": "Enemy Carrier A", "maxSortieTimeHours": 4},
+                {"id": "Enemy Carrier B", "maxSortieTimeHours": 5},
+                {"id": "Enemy Destroyer A", "maxSortieTimeHours": 4},
+                {"id": "Enemy Destroyer B", "maxSortieTimeHours": 5},
+                {"id": "Enemy Cruiser A", "maxSortieTimeHours": 6},
+                {"id": "Enemy Cruiser B", "maxSortieTimeHours": 6}
             ]
         },
         "minJetsPerSortie": 2,
