@@ -2,6 +2,10 @@ import React from "react";
 
 import { Button, FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 
+// Would like test-data to be in common area outside frontend/backend,
+// but React app doesn't allow imports outside its src area.
+import cannedRequestJson from '../test-data/getPlanAssessmentRequest.json';
+
 export class NameForm extends React.Component<any, any> {
     constructor(props: any) {
       super(props);
@@ -49,22 +53,7 @@ export class NameForm extends React.Component<any, any> {
                   'Allow': 'application/json',
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    body: `{
-                      "numMissiles": 50,
-                      "targetIdToDamage": { 
-                          "entries":  [
-                              {"id": "CarrierA", "damage": 1},
-                              {"id": "CarrierB", "damage": 2},
-                              {"id": "DestroyerA", "damage": 1},
-                              {"id": "DestroyerB", "damage": 2},
-                              {"id": "CruiserA", "damage": 0},
-                              {"id": "CruiserB", "damage": 1}
-                          ]
-                      }
-                  }
-                  `
-                    })
+                body: JSON.stringify(cannedRequestJson)
               })
                 .then(res => res.json())
                 .then(data => {
