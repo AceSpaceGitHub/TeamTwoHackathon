@@ -1,5 +1,6 @@
 import { Dispatch } from "redux";
-import { Action, OperatingContext } from "../interfaces/sim-store-state";
+import { OperatingContext } from "../interfaces/operating-context";
+import { PlanAssessment } from "../interfaces/plan-assessment";
 
 /**
  * Base payload type.
@@ -12,41 +13,41 @@ export interface BaseActionPayload {
 }
 
 /**
- * Type for updating actions.
+ * Type for updating plan assessment.
  */
- export const UPDATE_ACTIONS = "UpdateActions";
+ export const UPDATE_PLAN_ASSESSMENT = "UpdatePlanAssessment";
 
 /**
- * Payload for updating latest actions.
+ * Payload for updating plan assessment.
  */
-export interface UpdateActionsPayload extends BaseActionPayload {
+export interface UpdatePlanAssessmentPayload extends BaseActionPayload {
     /**
-     * Actions to update with.
+     * Data to update with.
      */
-    actions: Action[];
+    planAssessment: PlanAssessment;
 }
 
 /**
- * Action creator for updating latest actions.
+ * Action creator for updating plan assessment.
  * 
- * @param {Action[]} actions Actions.
- * @returns {UpdateActionsPayload} Payload.
+ * @param {PlanAssessment} planAssessment Plan assessment.
+ * @returns {UpdatePlanAssessmentPayload} Payload.
  */
-export const updateActionsAction = (actions: Action[]): UpdateActionsPayload => ({
-    type: UPDATE_ACTIONS,
-    actions,
+export const updatePlanAssessmentAction = (planAssessment: PlanAssessment): UpdatePlanAssessmentPayload => ({
+    type: UPDATE_PLAN_ASSESSMENT,
+    planAssessment,
 });
 
 /**
- * Thunk for dispatching an action to update actions in the store.
+ * Thunk for dispatching an action to update plan assessment in the store.
  * 
- * @param {Action[]} actions Actions.
- * @returns {UpdateActionsPayload} Payload.
+ * @param {PlanAssessment} planAssessment Plan assessment.
+ * @returns {UpdatePlanAssessmentPayload} Payload.
  */
-export const updateActions = (actions: Action[]):
-    ((dispatch: Dispatch<UpdateActionsPayload>) => UpdateActionsPayload) => {
-    return (dispatch: Dispatch<UpdateActionsPayload>): UpdateActionsPayload => {
-        return dispatch(updateActionsAction(actions));
+export const updatePlanAssessment = (planAssessment: PlanAssessment):
+    ((dispatch: Dispatch<UpdatePlanAssessmentPayload>) => UpdatePlanAssessmentPayload) => {
+    return (dispatch: Dispatch<UpdatePlanAssessmentPayload>): UpdatePlanAssessmentPayload => {
+        return dispatch(updatePlanAssessmentAction(planAssessment));
     };
 };
 
@@ -70,7 +71,7 @@ export interface UpdateOperatingContextPayload extends BaseActionPayload {
  */
  export const updateOperatingContextAction =
     (operatingContext: OperatingContext): UpdateOperatingContextPayload => ({
-    type: UPDATE_ACTIONS,
+    type: UPDATE_OPERATING_CONTEXT,
     operatingContext,
 });
 

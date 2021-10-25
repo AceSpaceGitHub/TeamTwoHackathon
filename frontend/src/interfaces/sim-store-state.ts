@@ -1,13 +1,14 @@
 import { OperatingContext } from "./operating-context";
+import { PlanAssessment } from "./plan-assessment";
 
 /**
  * Shape of the sim store state.
  */
 export interface SimStoreState {
     /**
-     * Latest results of actions.
+     * Latest captured plan assessment.
      */
-    actions: Action[],
+    planAssessment: PlanAssessment | null,
     /**
      * Current operating picture.
      */
