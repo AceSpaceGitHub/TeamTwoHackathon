@@ -142,12 +142,12 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       missilesNum[k] = "Ship " + displayVal;
     }
     //const plan = JSON.parse(sampleData)
-    console.log(sampleData)
-    if(sampleData){
-      return(
-        <ActionsTaken planAssessment={sampleData as PlanAssessment}/>
-      )
-    }
+    // console.log(sampleData)
+    // if(sampleData){
+    //   return(
+    //     <ActionsTaken planAssessment={sampleData as PlanAssessment}/>
+    //   )
+    // }
 
     return (
       <div>
