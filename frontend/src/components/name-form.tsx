@@ -150,7 +150,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
             value={6/*this.state.numShips*/}
             InputLabelProps={{ shrink: true }}
             onChange={(value) => {
-              this.setState({numShips: +value.target.value})
+              //this.setState({numShips: +value.target.value})
             }}
           />
 
