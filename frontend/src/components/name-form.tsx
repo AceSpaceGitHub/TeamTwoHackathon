@@ -25,7 +25,9 @@ import { updatePlanAssessment } from "./sim-actions";
 
 interface NameState {
   numShips: number,
-  missiles:string,
+  numJets: number,
+  numPilots: number,
+  missiles: number,
   ships: {name:string, damage: string}[]
 }
 
@@ -55,7 +57,9 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     super(props);
     this.state = {
       numShips:6,
-      missiles: "",
+      numJets:0,
+      numPilots:0,
+      missiles: 0,
       ships: [],
     };
 
@@ -63,7 +67,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
   }
 
   handleTextChange(event: any) {
-    this.setState({ missiles: event.target.value });
+    this.setState({ missiles: +event.target.value });
   }
 
   createData(name: string, damage: string) {
@@ -151,6 +155,30 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
             InputLabelProps={{ shrink: true }}
             onChange={(value) => {
               //this.setState({numShips: +value.target.value})
+            }}
+          />
+        <TextField
+            id="outlined-basic"
+            label="Number of jets:"
+            variant="outlined"
+            margin="normal"
+            type="number"
+            value={this.state.numJets}
+            InputLabelProps={{ shrink: true }}
+            onChange={(value) => {
+              this.setState({numJets: +value.target.value})
+            }}
+          />
+        <TextField
+            id="outlined-basic"
+            label="Number of pilots:"
+            variant="outlined"
+            margin="normal"
+            type="number"
+            value={this.state.numPilots}
+            InputLabelProps={{ shrink: true }}
+            onChange={(value) => {
+              this.setState({numPilots: +value.target.value})
             }}
           />
 
