@@ -23,6 +23,8 @@ import { SIM_REDUCER_KEY } from "./sim-reducers";
 import { PlanAssessment } from "../interfaces/plan-assessment";
 import { updatePlanAssessment } from "./sim-actions";
 import { DamageType } from "../types/damage-type";
+import { ActionsTaken } from "./actions-taken";
+const sampleData = require('../test-data/getPlanAssessmentResponse.json');
 
 interface NameState {
   numShips: number,
@@ -139,6 +141,14 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       var displayVal = k + 1;
       missilesNum[k] = "Ship " + displayVal;
     }
+    //const plan = JSON.parse(sampleData)
+    console.log(sampleData)
+    if(sampleData){
+      return(
+        <ActionsTaken planAssessment={sampleData as PlanAssessment}/>
+      )
+    }
+
     return (
       <div>
         <TextField
