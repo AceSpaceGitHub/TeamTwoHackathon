@@ -24,6 +24,7 @@ import { PlanAssessment } from "../interfaces/plan-assessment";
 import { updatePlanAssessment } from "./sim-actions";
 
 interface NameState {
+  numShips: number,
   missiles:string,
   ships: {name:string, damage: string}[]
 }
@@ -53,14 +54,9 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
   constructor(props: NameFormProps) {
     super(props);
     this.state = {
+      numShips:0,
       missiles: "",
-      ships: [
-        {name:"Ship 1",damage: ""},
-        {name:"Ship 2",damage: ""},
-        {name:"Ship 3",damage: ""},
-        {name:"Ship 4",damage: ""},
-        {name:"Ship 5",damage: ""},
-      ],
+      ships: [],
     };
 
     this.handleTextChange = this.handleTextChange.bind(this);
@@ -72,6 +68,17 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
 
   createData(name: string, damage: string) {
     return { name, damage };
+  }
+
+  componentDidUpdate(){
+    if(this.state.numShips !== this.state.ships.length){
+      let newShips = this.state.ships;
+      for(let i = 0; i < this.state.numShips; i++){
+        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: ''};
+      }
+      newShips = newShips.slice(0,this.state.numShips);
+      this.setState({ships: newShips});
+    }
   }
 
   /**
@@ -123,6 +130,18 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
           InputLabelProps={{ shrink: true }}
           onChange={this.handleTextChange}
         />
+        <TextField
+            id="outlined-basic"
+            label="Number of ships:"
+            variant="outlined"
+            margin="normal"
+            type="number"
+            value={this.state.numShips}
+            InputLabelProps={{ shrink: true }}
+            onChange={(value) => {
+              this.setState({numShips: +value.target.value})
+            }}
+          />
 
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
