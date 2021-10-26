@@ -143,11 +143,11 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     }
     //const plan = JSON.parse(sampleData)
     console.log(sampleData)
-    if(sampleData){
+    /*if(sampleData){
       return(
         <ActionsTaken planAssessment={sampleData as PlanAssessment}/>
       )
-    }
+    }*/
 
     return (
       <div>

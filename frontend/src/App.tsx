@@ -12,12 +12,14 @@ import NameForm from "./components/name-form";
 const rootReducer = combineReducers({ [SIM_REDUCER_KEY]: SimReducer });
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
+
+
 class App extends React.Component {
   public render(): React.ReactNode {
     return (
-      <Provider store={store}>
-        <NameForm />
-      </Provider>
+        <Provider store={store}>
+          <NameForm />
+        </Provider>
     );
   }
 }
