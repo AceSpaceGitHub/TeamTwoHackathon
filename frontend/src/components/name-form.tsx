@@ -54,7 +54,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
   constructor(props: NameFormProps) {
     super(props);
     this.state = {
-      numShips:0,
+      numShips:6,
       missiles: "",
       ships: [],
     };
@@ -68,6 +68,17 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
 
   createData(name: string, damage: string) {
     return { name, damage };
+  }
+
+  componentDidMount(){
+    if(this.state.numShips !== this.state.ships.length){
+      let newShips = this.state.ships;
+      for(let i = 0; i < this.state.numShips; i++){
+        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: ''};
+      }
+      newShips = newShips.slice(0,this.state.numShips);
+      this.setState({ships: newShips});
+    }
   }
 
   componentDidUpdate(){
@@ -136,7 +147,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
             variant="outlined"
             margin="normal"
             type="number"
-            value={this.state.numShips}
+            value={6/*this.state.numShips*/}
             InputLabelProps={{ shrink: true }}
             onChange={(value) => {
               this.setState({numShips: +value.target.value})
