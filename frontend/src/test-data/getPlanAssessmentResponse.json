@@ -1,0 +1,98 @@
+{
+    "resultingStates": [
+        {
+            "numJets": "50",
+            "numMissiles": "9",
+            "numPilots": "50",
+            "targetIdToDamage": {
+                "Enemy Carrier A": "0",
+                "Enemy Carrier B": "2",
+                "Enemy Cruiser A": "0",
+                "Enemy Cruiser B": "0",
+                "Enemy Destroyer A": "2",
+                "Enemy Destroyer B": "2"
+            }
+        },
+        {
+            "numJets": "50",
+            "numMissiles": "5",
+            "numPilots": "50",
+            "targetIdToDamage": {
+                "Enemy Carrier A": "0",
+                "Enemy Carrier B": "2",
+                "Enemy Cruiser A": "0",
+                "Enemy Cruiser B": "0",
+                "Enemy Destroyer A": "2",
+                "Enemy Destroyer B": "2"
+            }
+        },
+        {
+            "numJets": "50",
+            "numMissiles": "1",
+            "numPilots": "50",
+            "targetIdToDamage": {
+                "Enemy Carrier A": "0",
+                "Enemy Carrier B": "2",
+                "Enemy Cruiser A": "0",
+                "Enemy Cruiser B": "0",
+                "Enemy Destroyer A": "2",
+                "Enemy Destroyer B": "2"
+            }
+        },
+        {
+            "numJets": "50",
+            "numMissiles": "-3",
+            "numPilots": "50",
+            "targetIdToDamage": {
+                "Enemy Carrier A": "0",
+                "Enemy Carrier B": "2",
+                "Enemy Cruiser A": "0",
+                "Enemy Cruiser B": "0",
+                "Enemy Destroyer A": "2",
+                "Enemy Destroyer B": "2"
+            }
+        }
+    ],
+    "sortieActions": [
+        {
+            "missileLoadouts": [
+                "1",
+                "1"
+            ],
+            "targetIds": [
+                "Enemy Destroyer B",
+                "Enemy Carrier B"
+            ]
+        },
+        {
+            "missileLoadouts": [
+                "1",
+                "1"
+            ],
+            "targetIds": [
+                "Enemy Destroyer B",
+                "Enemy Carrier B"
+            ]
+        },
+        {
+            "missileLoadouts": [
+                "1",
+                "1"
+            ],
+            "targetIds": [
+                "Enemy Destroyer B",
+                "Enemy Carrier B"
+            ]
+        },
+        {
+            "missileLoadouts": [
+                "0",
+                "1"
+            ],
+            "targetIds": [
+                "Enemy Carrier A",
+                "Enemy Destroyer A"
+            ]
+        }
+    ]
+}

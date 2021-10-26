@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+document.title = "Team Two AI Sim";
+
 ReactDOM.render(
   <React.StrictMode>
     <App />
