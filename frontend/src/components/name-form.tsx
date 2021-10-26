@@ -23,6 +23,11 @@ import { SIM_REDUCER_KEY } from "./sim-reducers";
 import { PlanAssessment } from "../interfaces/plan-assessment";
 import { updatePlanAssessment } from "./sim-actions";
 
+interface NameState {
+  missiles:string,
+  ships: {name:string, damage: string}[]
+}
+
 export interface StoreStateProps {
   /**
    * Current operating context.
@@ -44,11 +49,18 @@ export interface DispatchProps {
  */
 export type NameFormProps = StoreStateProps & DispatchProps;
 
-export class NameForm extends React.Component<NameFormProps, any> {
+export class NameForm extends React.Component<NameFormProps, NameState> {
   constructor(props: NameFormProps) {
     super(props);
     this.state = {
       missiles: "",
+      ships: [
+        {name:"Ship 1",damage: ""},
+        {name:"Ship 2",damage: ""},
+        {name:"Ship 3",damage: ""},
+        {name:"Ship 4",damage: ""},
+        {name:"Ship 5",damage: ""},
+      ],
     };
 
     this.handleTextChange = this.handleTextChange.bind(this);
@@ -56,6 +68,10 @@ export class NameForm extends React.Component<NameFormProps, any> {
 
   handleTextChange(event: any) {
     this.setState({ missiles: event.target.value });
+  }
+
+  createData(name: string, damage: string) {
+    return { name, damage };
   }
 
   /**
@@ -87,17 +103,6 @@ export class NameForm extends React.Component<NameFormProps, any> {
   }
 
   render() {
-    function createData(name: string, damage: string) {
-      return { name, damage };
-    }
-
-    const ships = [
-      createData("Ship 1", ""),
-      createData("Ship 2", ""),
-      createData("Ship 3", ""),
-      createData("Ship 4", ""),
-      createData("Ship 5", ""),
-    ];
 
     //Plug this missilesNum array into
     //line `{ships.map((row) => (` to dynamically update table rows
@@ -122,26 +127,32 @@ export class NameForm extends React.Component<NameFormProps, any> {
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableBody>
-              {ships.map((row) => (
+              {this.state.ships.map((row) => (
                 <TableRow
                   key={row.name}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell>{row.name}</TableCell>
                   <TableCell>
-                    <FormControl fullWidth>
+                    <FormControl sx={{float: 'right', minWidth:'300px'}}>
                       <InputLabel id="demo-simple-select-label">
                         Status
                       </InputLabel>
                       <Select
                         value={row.damage}
                         labelId="demo-simple-select-label"
-                        // onChange={this.handleSelectChange}
+                        onChange={(value) => {
+                          const ships = this.state.ships;
+                          if(ships !== undefined){
+                            ships.find((name) => { if(name.name === row.name) name.damage = value.target.value})
+                          }
+                          this.setState({ships: ships});
+                        }}
                         id="demo-simple-select"
                       >
-                        <MenuItem>No Damage</MenuItem>
-                        <MenuItem>Disabled</MenuItem>
-                        <MenuItem>Destroyed</MenuItem>
+                        <MenuItem value={"No Damage"}>No Damage</MenuItem>
+                        <MenuItem value={"Disabled"}>Disabled</MenuItem>
+                        <MenuItem value={"Destroyed"}>Destroyed</MenuItem>
                       </Select>
                     </FormControl>
                   </TableCell>
@@ -154,7 +165,7 @@ export class NameForm extends React.Component<NameFormProps, any> {
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableBody>
-              {ships.map((row) => (
+              {this.state.ships.map((row) => (
                 <TableRow
                   key={row.name}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -163,7 +174,7 @@ export class NameForm extends React.Component<NameFormProps, any> {
                     {row.name}
                   </TableCell>
                   {/* Was last trying to get this to work. Current implementation does not work */}
-                  {ships.forEach((element) => {
+                  {this.state.ships.forEach((element) => {
                     if (element.name !== row.name) {
                       var labelString =
                         "Percent to protect " + element.name + ":";
