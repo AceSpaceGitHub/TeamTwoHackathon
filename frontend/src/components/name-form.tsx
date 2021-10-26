@@ -22,13 +22,14 @@ import { SimStoreState } from "../interfaces/sim-store-state";
 import { SIM_REDUCER_KEY } from "./sim-reducers";
 import { PlanAssessment } from "../interfaces/plan-assessment";
 import { updatePlanAssessment } from "./sim-actions";
+import { DamageType } from "../types/damage-type";
 
 interface NameState {
   numShips: number,
   numJets: number,
   numPilots: number,
   missiles: number,
-  ships: {name:string, damage: string}[]
+  ships: {name:string, damage: DamageType}[]
 }
 
 export interface StoreStateProps {
@@ -36,6 +37,11 @@ export interface StoreStateProps {
    * Current operating context.
    */
   operatingContext: OperatingContext;
+
+  /**
+   * Current plan assessment.
+   */
+  planAssessment: PlanAssessment | null;
 }
 
 export interface DispatchProps {
@@ -78,7 +84,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     if(this.state.numShips !== this.state.ships.length){
       let newShips = this.state.ships;
       for(let i = 0; i < this.state.numShips; i++){
-        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: ''};
+        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: DamageType.Untouched};
       }
       newShips = newShips.slice(0,this.state.numShips);
       this.setState({ships: newShips});
@@ -89,7 +95,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     if(this.state.numShips !== this.state.ships.length){
       let newShips = this.state.ships;
       for(let i = 0; i < this.state.numShips; i++){
-        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: ''};
+        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: DamageType.Untouched};
       }
       newShips = newShips.slice(0,this.state.numShips);
       this.setState({ships: newShips});
@@ -202,15 +208,15 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                         onChange={(value) => {
                           const ships = this.state.ships;
                           if(ships !== undefined){
-                            ships.find((name) => { if(name.name === row.name) name.damage = value.target.value})
+                            ships.find((name) => { if(name.name === row.name) name.damage = value.target.value as DamageType})
                           }
                           this.setState({ships: ships});
                         }}
                         id="demo-simple-select"
                       >
-                        <MenuItem value={"No Damage"}>No Damage</MenuItem>
-                        <MenuItem value={"Disabled"}>Disabled</MenuItem>
-                        <MenuItem value={"Destroyed"}>Destroyed</MenuItem>
+                        <MenuItem value={DamageType.Untouched}>Untouched</MenuItem>
+                        <MenuItem value={DamageType.Disabled}>Disabled</MenuItem>
+                        <MenuItem value={DamageType.Destroyed}>Destroyed</MenuItem>
                       </Select>
                     </FormControl>
                   </TableCell>
@@ -278,6 +284,7 @@ const mapStoreToProps = (state: {
 }): StoreStateProps => {
   return {
     operatingContext: state[SIM_REDUCER_KEY].operatingContext,
+    planAssessment:state[SIM_REDUCER_KEY].planAssessment,
   };
 };
 
