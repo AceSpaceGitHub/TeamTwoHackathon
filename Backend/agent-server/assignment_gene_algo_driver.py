@@ -1,21 +1,8 @@
-import numpy
 import random
-from random import randint, random, sample, shuffle
+from random import randint, random, sample
 
-def getUniqueCombos(dim1, dim2):
-    unique_combinations = [(dim1[i], dim2[j]) for i in range(len(dim1)) for j in range(len(dim2))]
-    return unique_combinations
-
-def reflectedFill(matrix, dim1, dim2, value):
-    combos = getUniqueCombos(dim1, dim2)
-    for combo in combos:
-        if combo[0] != combo[1]:
-            matrix[combo[0]][combo[1]] = matrix[combo[1]][combo[0]] = value
-
-def fill(matrix, dim1, dim2, value):
-    for i in dim1:
-        for j in dim2:
-            matrix[i][j] = value
+from gene_constraints import *
+from gene_utils import tournamentSelection
 
 def inSameCarrier(jetIdx1, jetIdx2, pilotIdx1, pilotIdx2):
     return (jetToCarrier[0][jetIdx1] == jetToCarrier[0][jetIdx2]
@@ -115,86 +102,6 @@ def mutation(chromosome, mutationRate):
             elif i == 22 or i == 23:
                 chromosome[i] = randint(0, numPilots-1)
 
-numSorties = 6
-numJets = 19
-numPilots = 21
-
-# Create affinity matrices.
-#
-# So actually since we want to minimize our fitness cost,
-# this is actually sort of reverse notion of affinity
-# (lower score, more compatible).
-#
-# So also, ideally, these matrices aren't handcrafted and
-# are figured out based on staff restrictions, squadron makeups, etc.
-sameSquad = -24
-sameCarrier = -12
-costToMoveBetweenCarrier = 24
-costOfWorkingRestriction = 50
-
-jetAffinity = [[costToMoveBetweenCarrier] * numJets for i in range(numJets)]
-reflectedFill(jetAffinity, range(0, 11), range(0, 11), sameCarrier)
-reflectedFill(jetAffinity, range(11, 19), range(11, 19), sameCarrier)
-
-reflectedFill(jetAffinity, range(0, 4), range(0, 4), sameSquad)
-reflectedFill(jetAffinity, range(4, 8), range(4, 8), sameSquad)
-reflectedFill(jetAffinity, range(8, 11), range(8, 11), sameSquad)
-reflectedFill(jetAffinity, range(11, 15), range(11, 15), sameSquad)
-reflectedFill(jetAffinity, range(15, 19), range(15, 19), sameSquad)
-
-jetAffinity[9][10] = jetAffinity[10][9] = costOfWorkingRestriction
-
-pilotAffinity = [[costToMoveBetweenCarrier] * numPilots for i in range(numPilots)]
-reflectedFill(pilotAffinity, range(0, 14), range(0, 14), sameCarrier)
-reflectedFill(pilotAffinity, range(14, 21), range(14, 21), sameCarrier)
-
-reflectedFill(pilotAffinity, range(0, 5), range(0, 5), sameSquad)
-reflectedFill(pilotAffinity, range(5, 10), range(5, 10), sameSquad)
-reflectedFill(pilotAffinity, range(10, 14), range(10, 14), sameSquad)
-reflectedFill(pilotAffinity, range(14, 17), range(14, 17), sameSquad)
-reflectedFill(pilotAffinity, range(17, 21), range(17, 21), sameSquad)
-
-pilotAffinity[0][1] = pilotAffinity[1][0] = costOfWorkingRestriction
-pilotAffinity[10][11] = pilotAffinity[11][10] = costOfWorkingRestriction
-# Should probably reverse this or check this in fitness cost.
-# Having a lower cost here means the algo will want to spam these combos.
-#pilotAffinity[2][3] = pilotAffinity[3][2] = costOfPreferentialAssignment
-#pilotAffinity[2][8] = pilotAffinity[8][2] = costOfPreferentialAssignment
-#pilotAffinity[17][20] = pilotAffinity[20][17] = costOfPreferentialAssignment
-#pilotAffinity[17][18] = pilotAffinity[18][17] = costOfPreferentialAssignment
-
-pilotJetAffinity = [[costToMoveBetweenCarrier] * numJets for i in range(numPilots)]
-fill(pilotJetAffinity, range(0, 14), range(0, 11), sameCarrier)
-fill(pilotJetAffinity, range(14, 21), range(11, 19), sameCarrier)
-
-fill(pilotJetAffinity, range(0, 5), range(0, 4), sameSquad)
-fill(pilotJetAffinity, range(5, 10), range(4, 8), sameSquad)
-fill(pilotJetAffinity, range(10, 14), range(8, 11), sameSquad)
-fill(pilotJetAffinity, range(14, 17), range(11, 15), sameSquad)
-fill(pilotJetAffinity, range(17, 21), range(15, 19), sameSquad)
-
-pilotToCarrier = [[0] * numPilots for i in range(1)]
-fill(pilotToCarrier, range(1), range(0, 14), 0)
-fill(pilotToCarrier, range(1), range(14, 21), 1)
-
-pilotToSquadron = [[0] * numPilots for i in range(1)]
-fill(pilotToCarrier, range(1), range(0, 5), 0)
-fill(pilotToCarrier, range(1), range(5, 10), 1)
-fill(pilotToCarrier, range(1), range(10, 14), 2)
-fill(pilotToCarrier, range(1), range(15, 17), 3)
-fill(pilotToCarrier, range(1), range(17, 21), 4)
-
-jetToCarrier = [[0] * numJets for i in range(1)]
-fill(jetToCarrier, range(1), range(0, 11), 0)
-fill(jetToCarrier, range(1), range(11, 19), 1)
-
-jetToSquadron = [[0] * numJets for i in range(1)]
-fill(pilotToCarrier, range(1), range(0, 4), 0)
-fill(pilotToCarrier, range(1), range(4, 8), 1)
-fill(pilotToCarrier, range(1), range(9, 11), 2)
-fill(pilotToCarrier, range(1), range(11, 15), 3)
-fill(pilotToCarrier, range(1), range(15, 19), 4)
-
 numPopulation = 1000
 # 2 pilots, 2 jets
 numGenes = numSorties * 4
@@ -208,7 +115,7 @@ mutationRate = .12
 # The population will have n chromosomes where each chromosome has m genes.
 populationSize = (numPopulation, numGenes)
 
-#Creating the initial population.
+# Creating the initial population.
 population = []
 for i in range(numPopulation):
     newChromosome = []
@@ -221,7 +128,6 @@ best, best_eval = 0, computeFitness(population[0])
 for genIdx in range(numGenerations):
     # Compute fitness of all candidate chromosomes.
     scores = [computeFitness(c) for c in population]
-    #print (scores)
 
     # Check for new best.
     for i in range(numPopulation):
@@ -231,7 +137,6 @@ for genIdx in range(numGenerations):
 
     # Select parents.
     selected = [tournamentSelection(population, scores) for _ in range(numPopulation)]
-    #print (selected)
 
     # Create the next generation from the parents.
     children = list()
@@ -241,6 +146,3 @@ for genIdx in range(numGenerations):
             mutation(child, mutationRate)
             children.append(child)
     population = children
-
-print(best)
-print(best_eval)
