@@ -43,7 +43,7 @@ namespace Backend.WebApi.Controllers
                 simulation.Missiles = lastState.Missiles;
                 simulation.Jets = lastState.Assets[0];
                 simulation.Pilots = lastState.Assets[1];
-                simulation.Actions = new List<UIAction>();
+                simulation.Actions = new List<object>();
 
                 foreach (var sortie in bestResult.Actions)
                 {
@@ -81,7 +81,7 @@ namespace Backend.WebApi.Controllers
                 simulation.Missiles = lastState.Missiles;
                 simulation.Jets = lastState.Assets[0];
                 simulation.Pilots = lastState.Assets[1];
-                simulation.Actions = new List<UIAction>();
+                simulation.Actions = new List<object>();
 
                 foreach (var sortie in bestResult.Actions)
                 {
