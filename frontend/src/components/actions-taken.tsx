@@ -19,7 +19,7 @@ export interface ActionsTakenState{
 }
 
 const stateDict = {
-    0: 'Untouched',
+    0: 'Unharmed',
     1: 'Disabled',
     2: 'Destroyed'
 }

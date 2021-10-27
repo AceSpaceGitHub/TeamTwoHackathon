@@ -24,6 +24,7 @@ import { PlanAssessment } from "../interfaces/plan-assessment";
 import { updatePlanAssessment } from "./sim-actions";
 import { DamageType } from "../types/damage-type";
 import { ActionsTaken } from "./actions-taken";
+import _ from "lodash";
 const sampleData = require('../test-data/getPlanAssessmentResponse.json');
 
 interface NameState {
@@ -31,7 +32,8 @@ interface NameState {
   numJets: number,
   numPilots: number,
   missiles: number,
-  ships: {name:string, damage: DamageType}[]
+  ships: {name:string, damage: DamageType}[],
+  defenses: number[][]
 }
 
 export interface StoreStateProps {
@@ -69,6 +71,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       numPilots:0,
       missiles: 0,
       ships: [],
+      defenses: [],
     };
 
     this.handleTextChange = this.handleTextChange.bind(this);
@@ -85,23 +88,35 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
   componentDidMount(){
     if(this.state.numShips !== this.state.ships.length){
       let newShips = this.state.ships;
+      let defenses = [];
       for(let i = 0; i < this.state.numShips; i++){
-        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: DamageType.Untouched};
+        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: DamageType.Unharmed};
       }
       newShips = newShips.slice(0,this.state.numShips);
       this.setState({ships: newShips});
+
+      for(let i = 0; i < this.state.numShips; i++){
+        defenses.push([0,0,0,0,0,0]);
+      }
+      this.setState({ships: newShips, defenses: _.cloneDeep(defenses)});
     }
   }
 
   componentDidUpdate(){
     if(this.state.numShips !== this.state.ships.length){
       let newShips = this.state.ships;
+      let defenses = [];
       for(let i = 0; i < this.state.numShips; i++){
-        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: DamageType.Untouched};
+        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: DamageType.Unharmed};
       }
       newShips = newShips.slice(0,this.state.numShips);
-      this.setState({ships: newShips});
+      
+      for(let i = 0; i < this.state.numShips; i++){
+        defenses.push([0,0,0,0,0,0]);
+      }
+      this.setState({ships: newShips, defenses: _.cloneDeep(defenses)});
     }
+    
   }
 
   /**
@@ -130,6 +145,14 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       .catch((error) => {
         alert("Issue with calling server:" + error);
       });
+  }
+
+  updateDamages(primaryShip: string, defendingShip: string, newValue: number): void{
+    const firstIndex = +primaryShip[primaryShip.length-1] - 1;
+    const secondIndex = +defendingShip[defendingShip.length-1] - 1;
+    let newDefenses = this.state.defenses;
+    newDefenses[firstIndex][secondIndex] = newValue;
+    this.setState({defenses:_.cloneDeep(newDefenses)});
   }
 
   render() {
@@ -224,7 +247,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                         }}
                         id="demo-simple-select"
                       >
-                        <MenuItem value={DamageType.Untouched}>Untouched</MenuItem>
+                        <MenuItem value={DamageType.Unharmed}>Unharmed</MenuItem>
                         <MenuItem value={DamageType.Disabled}>Disabled</MenuItem>
                         <MenuItem value={DamageType.Destroyed}>Destroyed</MenuItem>
                       </Select>
@@ -244,26 +267,22 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                   key={row.name}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell component="th" scope="row">
+                  <TableCell component="th" scope="row" sx={{minWidth:'120px'}}>
                     {row.name}
                   </TableCell>
-                  {/* Was last trying to get this to work. Current implementation does not work */}
-                  {this.state.ships.forEach((element) => {
-                    if (element.name !== row.name) {
-                      var labelString =
-                        "Percent to protect " + element.name + ":";
-                      {
-                        <TableCell>
-                          <TextField
-                            label="percentage to protect"
-                            variant="outlined"
-                            type="number"
-                            InputLabelProps={{ shrink: true }}
-                          />
-                        </TableCell>;
-                      }
-                    }
-                  })}
+                  {this.state.ships.map((element) => (
+                      <TableCell>
+                        <TextField
+                          label={`${element.name} chance to defend ${row.name}`}
+                          variant="outlined"
+                          type="number"
+                          InputLabelProps={{ shrink: true }}
+                          onChange={(value) => {
+                            this.updateDamages(row.name, element.name, +value.target.value);
+                          }}
+                        />
+                      </TableCell>
+                  ))}
                 </TableRow>
               ))}
             </TableBody>
@@ -274,6 +293,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
           variant="contained"
           onClick={() => {
             alert(this.state.missiles + " missiles");
+            console.log(this.state.defenses);
           }}
         >
           Simulate
