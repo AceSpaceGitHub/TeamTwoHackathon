@@ -1,4 +1,6 @@
 import {
+    Container,
+    List,
     Paper,
     Table,
     TableBody,
@@ -9,6 +11,7 @@ import {
 import React from "react";
 import { PlanAssessment } from "../interfaces/plan-assessment";
 import _ from 'lodash';
+import heloImage from '../helo.jpg';
 
 export interface ActionsTakenProps{
 
@@ -34,6 +37,14 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
   constructor(props: ActionsTakenProps) {
     super(props);
   }
+
+    getAttackString(array: any[]){
+        let string = '';
+        array.forEach((entry) => {
+            string += (entry.targetId+' ');
+        })
+        return string;
+    }
 
   render(){
     let rows = [];
@@ -66,8 +77,26 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
     console.log(rows);
 
     return (
-        <div>
-            <TableContainer component={Paper}>
+        <div style={{display:'-webkit-box', overflowX:'hidden'}}>
+            <List>
+                {rows.map((row) => (
+                <Container sx={{height:'150px', marginLeft:'5%', marginBottom:'2%', marginRight:'5%', backgroundColor:'#353839', width:'auto'}}>
+                    <Container sx={{position: 'absolute', margin:'5px', width:'250px', height:'140px', backgroundImage:`url(${heloImage})`}}></Container>
+                    <Container sx={{marginLeft:'260px', overflow:'normal', width:'auto'}}>
+                        <div>
+                            <h3>Helo Launch</h3>
+                            <p>
+                                Helo 1 took off from Carrier 1 at 16:01:04 and returned at 16:31:06 to attack {this.getAttackString(row.attacks)}
+                            </p>
+                        </div>
+                    </Container>
+                </Container>
+                ))}
+            </List>
+        </div>
+    );
+  }
+/*<TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650, maxHeight:'100px' }} aria-label="simple table">
                     <TableCell sx={{borderRight:'groove', borderLeft:'groove', borderBottom:'groove'}}>Target 1</TableCell>
                     <TableCell sx={{borderRight:'groove', borderLeft:'groove', borderBottom:'groove'}}>Target 2</TableCell>
@@ -94,9 +123,5 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
                         ))}
                     </TableBody>
                 </Table>
-            </TableContainer>
-        </div>
-    );
-  }
-
+            </TableContainer>*/
 }
