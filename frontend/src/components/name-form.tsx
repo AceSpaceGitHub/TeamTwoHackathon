@@ -202,8 +202,9 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       <div>
         
 
-        <TableContainer sx={{float:'left', width: '20%'}} component={Paper}>
+        <TableContainer sx={{float:'left', width: '20%', maxHeight:'100vh'}} component={Paper}>
           <TextField
+            sx={{marginLeft:'10%'}}
             id="outlined-basic"
             label="Number of missiles:"
             variant="outlined"
@@ -214,6 +215,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
             onChange={this.handleTextChange}
           />
           <TextField
+              sx={{marginLeft:'10%'}}
               id="outlined-basic"
               label="Number of jets:"
               variant="outlined"
@@ -226,6 +228,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
               }}
             />
           <TextField
+              sx={{marginLeft:'10%'}}
               id="outlined-basic"
               label="Number of pilots:"
               variant="outlined"
