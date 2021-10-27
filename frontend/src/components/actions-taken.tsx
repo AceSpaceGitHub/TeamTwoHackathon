@@ -68,7 +68,7 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
     return (
         <div>
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Table sx={{ minWidth: 650, maxHeight:'100px' }} aria-label="simple table">
                     <TableCell sx={{borderRight:'groove', borderLeft:'groove', borderBottom:'groove'}}>Target 1</TableCell>
                     <TableCell sx={{borderRight:'groove', borderLeft:'groove', borderBottom:'groove'}}>Target 2</TableCell>
                     <TableCell sx={{borderRight:'groove', borderLeft:'groove', borderBottom:'groove'}}>{rows[0].targetState[0].id} State</TableCell>

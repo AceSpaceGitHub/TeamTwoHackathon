@@ -24,8 +24,14 @@ import { PlanAssessment } from "../interfaces/plan-assessment";
 import { updatePlanAssessment } from "./sim-actions";
 import { DamageType } from "../types/damage-type";
 import { ActionsTaken } from "./actions-taken";
-import _ from "lodash";
+import _, { initial } from "lodash";
 const sampleData = require('../test-data/getPlanAssessmentResponse.json');
+
+enum page {
+  INITIAL,
+  SIMULATING,
+  RESULTS
+}
 
 interface NameState {
   numShips: number,
@@ -33,8 +39,10 @@ interface NameState {
   numPilots: number,
   missiles: number,
   ships: {name:string, damage: DamageType}[],
-  defenses: number[][]
+  page: page;
 }
+
+
 
 export interface StoreStateProps {
   /**
@@ -46,6 +54,8 @@ export interface StoreStateProps {
    * Current plan assessment.
    */
   planAssessment: PlanAssessment | null;
+
+  
 }
 
 export interface DispatchProps {
@@ -71,7 +81,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       numPilots:0,
       missiles: 0,
       ships: [],
-      defenses: [],
+      page: page.INITIAL,
     };
 
     this.handleTextChange = this.handleTextChange.bind(this);
@@ -88,35 +98,22 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
   componentDidMount(){
     if(this.state.numShips !== this.state.ships.length){
       let newShips = this.state.ships;
-      let defenses = [];
       for(let i = 0; i < this.state.numShips; i++){
         newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: DamageType.Unharmed};
       }
       newShips = newShips.slice(0,this.state.numShips);
       this.setState({ships: newShips});
-
-      for(let i = 0; i < this.state.numShips; i++){
-        defenses.push([0,0,0,0,0,0]);
-      }
-      this.setState({ships: newShips, defenses: _.cloneDeep(defenses)});
     }
   }
 
   componentDidUpdate(){
     if(this.state.numShips !== this.state.ships.length){
       let newShips = this.state.ships;
-      let defenses = [];
       for(let i = 0; i < this.state.numShips; i++){
         newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: DamageType.Unharmed};
       }
       newShips = newShips.slice(0,this.state.numShips);
-      
-      for(let i = 0; i < this.state.numShips; i++){
-        defenses.push([0,0,0,0,0,0]);
-      }
-      this.setState({ships: newShips, defenses: _.cloneDeep(defenses)});
     }
-    
   }
 
   /**
@@ -147,12 +144,42 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       });
   }
 
-  updateDamages(primaryShip: string, defendingShip: string, newValue: number): void{
+  /*updateDamages(primaryShip: string, defendingShip: string, newValue: number): void{
     const firstIndex = +primaryShip[primaryShip.length-1] - 1;
     const secondIndex = +defendingShip[defendingShip.length-1] - 1;
     let newDefenses = this.state.defenses;
     newDefenses[firstIndex][secondIndex] = newValue;
     this.setState({defenses:_.cloneDeep(newDefenses)});
+  }*/
+
+  getMainPage(){
+    switch(this.state.page){
+      case page.INITIAL:
+        return(
+          <TableContainer sx={{height:'100vh', width: '80%'}}>
+            <Button
+            sx={{top:'40%', left:'40%'}}
+              variant="contained"
+              onClick={() => {
+                alert(this.state.missiles + " missiles");
+                this.setState({page: page.RESULTS})
+              }}
+            >
+              Simulate
+            </Button>
+          </TableContainer>
+        );
+      case page.RESULTS:
+        return(
+          <TableContainer sx={{height: '100vh', width: '80%'}}>
+            <ActionsTaken planAssessment={sampleData as PlanAssessment}/>
+          </TableContainer>
+        )
+        break;
+      case page.SIMULATING:
+        break;
+    }
+    
   }
 
   render() {
@@ -164,7 +191,6 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       var displayVal = k + 1;
       missilesNum[k] = "Ship " + displayVal;
     }
-    //const plan = JSON.parse(sampleData)
     // console.log(sampleData)
     // if(sampleData){
     //   return(
@@ -174,55 +200,44 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
 
     return (
       <div>
-        <TextField
-          id="outlined-basic"
-          label="Number of missiles:"
-          variant="outlined"
-          margin="normal"
-          type="number"
-          value={this.state.missiles}
-          InputLabelProps={{ shrink: true }}
-          onChange={this.handleTextChange}
-        />
-        <TextField
-            id="outlined-basic"
-            label="Number of ships:"
-            variant="outlined"
-            margin="normal"
-            type="number"
-            value={6/*this.state.numShips*/}
-            InputLabelProps={{ shrink: true }}
-            onChange={(value) => {
-              //this.setState({numShips: +value.target.value})
-            }}
-          />
-        <TextField
-            id="outlined-basic"
-            label="Number of jets:"
-            variant="outlined"
-            margin="normal"
-            type="number"
-            value={this.state.numJets}
-            InputLabelProps={{ shrink: true }}
-            onChange={(value) => {
-              this.setState({numJets: +value.target.value})
-            }}
-          />
-        <TextField
-            id="outlined-basic"
-            label="Number of pilots:"
-            variant="outlined"
-            margin="normal"
-            type="number"
-            value={this.state.numPilots}
-            InputLabelProps={{ shrink: true }}
-            onChange={(value) => {
-              this.setState({numPilots: +value.target.value})
-            }}
-          />
+        
 
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableContainer sx={{float:'left', width: '20%'}} component={Paper}>
+          <TextField
+            id="outlined-basic"
+            label="Number of missiles:"
+            variant="outlined"
+            margin="normal"
+            type="number"
+            value={this.state.missiles}
+            InputLabelProps={{ shrink: true }}
+            onChange={this.handleTextChange}
+          />
+          <TextField
+              id="outlined-basic"
+              label="Number of jets:"
+              variant="outlined"
+              margin="normal"
+              type="number"
+              value={this.state.numJets}
+              InputLabelProps={{ shrink: true }}
+              onChange={(value) => {
+                this.setState({numJets: +value.target.value})
+              }}
+            />
+          <TextField
+              id="outlined-basic"
+              label="Number of pilots:"
+              variant="outlined"
+              margin="normal"
+              type="number"
+              value={this.state.numPilots}
+              InputLabelProps={{ shrink: true }}
+              onChange={(value) => {
+                this.setState({numPilots: +value.target.value})
+              }}
+            />
+          <Table sx={{ }} aria-label="simple table">
             <TableBody>
               {this.state.ships.map((row) => (
                 <TableRow
@@ -231,7 +246,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                 >
                   <TableCell>{row.name}</TableCell>
                   <TableCell>
-                    <FormControl sx={{float: 'right', minWidth:'300px'}}>
+                    <FormControl sx={{float: 'right', minWidth:'150px'}}>
                       <InputLabel id="demo-simple-select-label">
                         Status
                       </InputLabel>
@@ -259,7 +274,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
           </Table>
         </TableContainer>
         <br />
-        <TableContainer component={Paper}>
+        {/*<TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableBody>
               {this.state.ships.map((row) => (
@@ -287,17 +302,9 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
               ))}
             </TableBody>
           </Table>
-        </TableContainer>
+        </TableContainer>*/}
         <br />
-        <Button
-          variant="contained"
-          onClick={() => {
-            alert(this.state.missiles + " missiles");
-            console.log(this.state.defenses);
-          }}
-        >
-          Simulate
-        </Button>
+        {this.getMainPage()}
       </div>
     );
   }
