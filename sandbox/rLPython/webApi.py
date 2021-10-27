@@ -18,12 +18,20 @@ def api_id():
     # Use the jsonify function from Flask to convert our list of
     # Python dictionaries to the JSON format.
     results = simulate()
+    predictionResults = []
 
     for prediction in results:
-        print('New Sortie - {}%'.format(prediction[0]))
+        actions = []
         for sortie in prediction[1]:
-            print(sortie)
+            sortieResult = {"Actions":sortie[0], "Missiles": sortie[1][0], "ExpectedHits": sortie[1][1], "CurrentHits": sortie[1][2], "Assets": sortie[1][3]}
+            actions.append(sortieResult)
+        
+        predictionResult = {"SuccessRate": prediction[0], "Actions": actions}
+        predictionResults.append(predictionResult)
+    
 
-    return jsonify(results)
+    jsonResults = {"Results": predictionResults}
+
+    return jsonify(jsonResults)
 
 app.run(port=5001)

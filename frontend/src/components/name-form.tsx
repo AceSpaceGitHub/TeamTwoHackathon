@@ -180,7 +180,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
               <TextField
                 sx={{marginLeft:'10%'}}
                 id="outlined-basic"
-                label="Number of missiles:"
+                label="Number of missiles remaining:"
                 variant="outlined"
                 margin="normal"
                 type="string"
@@ -190,7 +190,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
               <TextField
                   sx={{marginLeft:'10%'}}
                   id="outlined-basic"
-                  label="Number of jets:"
+                  label="Number of jets remaining:"
                   variant="outlined"
                   margin="normal"
                   type="string"
@@ -200,7 +200,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
               <TextField
                   sx={{marginLeft:'10%'}}
                   id="outlined-basic"
-                  label="Number of pilots:"
+                  label="Number of pilots survived:"
                   variant="outlined"
                   margin="normal"
                   type="string"
