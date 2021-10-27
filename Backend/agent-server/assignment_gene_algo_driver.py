@@ -11,14 +11,6 @@ from gene_utils import tournamentSelection
 genesPerSortie = 8
 chromosomeWidth = genesPerSortie * numSorties
 
-def inSameCarrier(jetIdx1, jetIdx2, pilotIdx1, pilotIdx2):
-    return (jetToCarrier[0][jetIdx1] == jetToCarrier[0][jetIdx2]
-    == pilotToCarrier[0][pilotIdx1] == pilotToCarrier[0][pilotIdx2])
-
-def inSameSquadron(jetIdx1, jetIdx2, pilotIdx1, pilotIdx2):
-    return (jetToSquadron[0][jetIdx1] == jetToSquadron[0][jetIdx2]
-    == pilotToSquadron[0][pilotIdx1] == pilotToSquadron[0][pilotIdx2])
-
 def computeFitness(chromosome):
     avgSortieScore = 0
     for i in range(numSorties):
