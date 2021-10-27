@@ -11,6 +11,7 @@ import {
 import React from "react";
 import { PlanAssessment } from "../interfaces/plan-assessment";
 import _ from 'lodash';
+import heloImage from '../helo.jpg';
 
 export interface ActionsTakenProps{
 
@@ -68,14 +69,22 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
     console.log(rows);
 
     return (
-        <List>
-            {rows[0].targetState.map(() => (
-            <Container sx={{height:'150px', width:'90%', marginLeft:'5%', marginBottom:'2%', backgroundColor:'#353839'}}>
-
-            </Container>
-            ))}
-        </List>
-            
+        <div style={{display:'-webkit-box', overflowX:'hidden'}}>
+            <List>
+                {rows[0].targetState.map(() => (
+                <Container sx={{height:'150px', marginLeft:'5%', marginBottom:'2%', backgroundColor:'#353839', width:'auto'}}>
+                    <Container sx={{position: 'absolute', margin:'5px', width:'250px', height:'140px', backgroundImage:`url(${heloImage})`}}></Container>
+                    <Container sx={{marginLeft:'260px', overflow:'normal', width:'auto'}}>
+                        <div>
+                            <p>
+                                Helicopter 1 took off from Carrier 1 at 16:01:04 and returned at 16:31:06
+                            </p>
+                        </div>
+                    </Container>
+                </Container>
+                ))}
+            </List>
+        </div>
     );
   }
 /*<TableContainer component={Paper}>

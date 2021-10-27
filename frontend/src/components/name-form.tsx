@@ -175,8 +175,8 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
         );
       case page.RESULTS:
         return(
-          <div style={{display:'flex', width:'80%'}}>
-            <TableContainer sx={{ width: '52vh', maxHeight:'100vh'}} component={Paper}>
+          <div style={{display:'-webkit-box', overflowX:'hidden'}}>
+            <TableContainer sx={{ width: '40vh', height:'fit-content'}} component={Paper}>
               <TextField
                 sx={{marginLeft:'10%'}}
                 id="outlined-basic"
@@ -229,7 +229,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                 </TableBody>
               </Table>
             </TableContainer>
-            <TableContainer sx={{height: '100vh', width: '100%'}}>
+            <TableContainer sx={{height: '100vh', display:'contents', overflowY:'scroll'}}>
               <ActionsTaken planAssessment={sampleData as PlanAssessment}/>
             </TableContainer>
           </div>
@@ -258,10 +258,10 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     // }
 
     return (
-      <div style={{display:'flex'}}>
+      <div style={{display:'block'}}>
         
 
-        <TableContainer sx={{float:'left', width: '40vh', maxHeight:'100vh'}} component={Paper}>
+        <TableContainer sx={{float:'left', width: '40vh', height:'fit-content'}} component={Paper}>
           <TextField
             sx={{marginLeft:'10%'}}
             id="outlined-basic"
