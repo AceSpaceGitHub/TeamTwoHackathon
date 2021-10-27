@@ -13,7 +13,7 @@ namespace Backend.WebApi.Models
 
         public float SuccessRate { get; set; }
 
-        public List<UIAction> Actions { get; set; }
+        public List<object> Actions { get; set; }
     }
 
     public class UIAction
