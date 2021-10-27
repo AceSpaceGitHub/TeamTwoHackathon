@@ -38,6 +38,14 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
     super(props);
   }
 
+    getAttackString(array: any[]){
+        let string = '';
+        array.forEach((entry) => {
+            string += (entry.targetId+' ');
+        })
+        return string;
+    }
+
   render(){
     let rows = [];
     let targets = [];
@@ -71,13 +79,14 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
     return (
         <div style={{display:'-webkit-box', overflowX:'hidden'}}>
             <List>
-                {rows[0].targetState.map(() => (
-                <Container sx={{height:'150px', marginLeft:'5%', marginBottom:'2%', backgroundColor:'#353839', width:'auto'}}>
+                {rows.map((row) => (
+                <Container sx={{height:'150px', marginLeft:'5%', marginBottom:'2%', marginRight:'5%', backgroundColor:'#353839', width:'auto'}}>
                     <Container sx={{position: 'absolute', margin:'5px', width:'250px', height:'140px', backgroundImage:`url(${heloImage})`}}></Container>
                     <Container sx={{marginLeft:'260px', overflow:'normal', width:'auto'}}>
                         <div>
+                            <h3>Helo Launch</h3>
                             <p>
-                                Helicopter 1 took off from Carrier 1 at 16:01:04 and returned at 16:31:06
+                                Helo 1 took off from Carrier 1 at 16:01:04 and returned at 16:31:06 to attack {this.getAttackString(row.attacks)}
                             </p>
                         </div>
                     </Container>

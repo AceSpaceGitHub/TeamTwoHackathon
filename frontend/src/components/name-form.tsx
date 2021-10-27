@@ -175,7 +175,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
         );
       case page.RESULTS:
         return(
-          <div style={{display:'-webkit-box', overflowX:'hidden'}}>
+          <div style={{display:'flex', overflowX:'hidden'}}>
             <TableContainer sx={{ width: '40vh', height:'fit-content'}} component={Paper}>
               <TextField
                 sx={{marginLeft:'10%'}}
