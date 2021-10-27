@@ -6,7 +6,14 @@ from gene_utils import fill, reflectedFill
 
 numSorties = 6
 numJets = 19
+numHeloCrews = 2
 numPilots = 21
+
+missionLengthHours = 7 * 24
+heloTimePadHours = 1
+# Actually this is gonna depend on the target...
+# but a ballpark average/common number.
+sortieTimeHours = 3
 
 # Create affinity matrices.
 #
@@ -84,3 +91,21 @@ fill(pilotToCarrier, range(1), range(4, 8), 1)
 fill(pilotToCarrier, range(1), range(9, 11), 2)
 fill(pilotToCarrier, range(1), range(11, 15), 3)
 fill(pilotToCarrier, range(1), range(15, 19), 4)
+
+heloToCarrier = {
+    0: 0,
+    1: 1
+}
+
+# Not sure if this is realistic -
+# assuming helo crews should only support sorties
+# that originated from the same carrier,
+# but also that each sortie must have flown out of the same carrier.
+sortieToCarrier = {
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 1,
+    4: 1,
+    5: 1
+}

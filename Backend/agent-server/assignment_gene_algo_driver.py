@@ -103,7 +103,7 @@ def mutation(chromosome, mutationRate):
                 chromosome[i] = randint(0, numPilots-1)
 
 numPopulation = 1000
-# 2 pilots, 2 jets
+# 2 pilots, 2 jets per sortie.
 numGenes = numSorties * 4
 numGenerations = 50
 # This is supposed to be relatively high.
