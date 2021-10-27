@@ -239,47 +239,43 @@ class ScenarioEnv(Env):
         self.state = self.manager.getState(self.numberOfmissiles, self.numberOfJets, self.numberOfPilots, self.tD1, self.tD2, self.tD3, self.tD4, self.tD5, self.tD6)
         return self.state
 
-model = PPO.load("Long_PPO")
+def simulate():
+    model = PPO.load("Long_PPO")
 
-scenarioEnvironment = ScenarioEnv(13, 19, 21, 2, 1, 1, 1, 0, 0)
-observation = scenarioEnvironment.reset()
-
-predictions = []
-
-for x in range(0, 100+1):
-    sorties = []
-    done = False
+    scenarioEnvironment = ScenarioEnv(13, 19, 21, 2, 1, 1, 1, 0, 0)
     observation = scenarioEnvironment.reset()
 
-    while not done:
-        action, _ = model.predict(observation)
-        observation, _, done, _ = scenarioEnvironment.step(action)
-        sorties.append([action.copy(), [observation["missiles"], 
-        observation["expectedShipDamage"].copy(), 
-        observation["currentShipDamage"].copy(), 
-        observation["assets"].copy()]])
+    predictions = []
 
-    solved = 0
-    for x in range(0, 1000):
+    for x in range(0, 100+1):
+        sorties = []
+        done = False
         observation = scenarioEnvironment.reset()
-        for sortie in sorties:
-            observation, _, done, _ = scenarioEnvironment.step(sortie[0])
-        
-        isExpectedDamageMet = True
-        for shipIndex in range(0, 6):
-            if observation["currentShipDamage"][shipIndex] < observation["expectedShipDamage"][shipIndex]:
-                isExpectedDamageMet = False
-                break
 
-        if isExpectedDamageMet and observation["missiles"] >= 0 and observation["assets"][0] >=0 and observation["assets"][1] >= 0:
-            solved += 1
-    predictions.append([(solved/1000.0)*100, sorties])
+        while not done:
+            action, _ = model.predict(observation)
+            observation, _, done, _ = scenarioEnvironment.step(action)
+            sorties.append([action.tolist(), [observation["missiles"], 
+            observation["expectedShipDamage"].tolist(), 
+            observation["currentShipDamage"].tolist(), 
+            observation["assets"].tolist()]])
 
-predictions.sort(reverse=True, key=lambda p: p[0])
+        solved = 0
+        for x in range(0, 1000):
+            observation = scenarioEnvironment.reset()
+            for sortie in sorties:
+                observation, _, done, _ = scenarioEnvironment.step(sortie[0])
+            
+            isExpectedDamageMet = True
+            for shipIndex in range(0, 6):
+                if observation["currentShipDamage"][shipIndex] < observation["expectedShipDamage"][shipIndex]:
+                    isExpectedDamageMet = False
+                    break
 
-for prediction in predictions[0:5]:
-    print('New Sortie - {}%'.format(prediction[0]))
-    for sortie in prediction[1]:
-        print(sortie)
+            if isExpectedDamageMet and observation["missiles"] >= 0 and observation["assets"][0] >=0 and observation["assets"][1] >= 0:
+                solved += 1
+        predictions.append([(solved/1000.0)*100, sorties])
 
-scenarioEnvironment.close()
+    predictions.sort(reverse=True, key=lambda p: p[0])
+    scenarioEnvironment.close()
+    return predictions[0:5]
