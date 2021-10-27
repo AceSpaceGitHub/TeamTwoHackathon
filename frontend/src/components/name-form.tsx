@@ -42,7 +42,11 @@ interface NameState {
   page: page;
 }
 
-
+const stateDict = {
+  0: 'Unharmed',
+  1: 'Disabled',
+  2: 'Destroyed'
+}
 
 export interface StoreStateProps {
   /**
@@ -171,9 +175,64 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
         );
       case page.RESULTS:
         return(
-          <TableContainer sx={{height: '100vh', width: '80%'}}>
-            <ActionsTaken planAssessment={sampleData as PlanAssessment}/>
-          </TableContainer>
+          <div style={{display:'flex', width:'80%'}}>
+            <TableContainer sx={{ width: '52vh', maxHeight:'100vh'}} component={Paper}>
+              <TextField
+                sx={{marginLeft:'10%'}}
+                id="outlined-basic"
+                label="Number of missiles:"
+                variant="outlined"
+                margin="normal"
+                type="string"
+                value={this.state.missiles}
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                  sx={{marginLeft:'10%'}}
+                  id="outlined-basic"
+                  label="Number of jets:"
+                  variant="outlined"
+                  margin="normal"
+                  type="string"
+                  value={this.state.numJets}
+                  InputLabelProps={{ shrink: true }}
+                />
+              <TextField
+                  sx={{marginLeft:'10%'}}
+                  id="outlined-basic"
+                  label="Number of pilots:"
+                  variant="outlined"
+                  margin="normal"
+                  type="string"
+                  value={this.state.numPilots}
+                  InputLabelProps={{ shrink: true }}
+                />
+              <Table sx={{ }} aria-label="simple table">
+                <TableBody>
+                  {this.state.ships.map((row) => (
+                    <TableRow
+                      key={row.name}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell>{row.name}</TableCell>
+                      <TableCell>
+                        <FormControl sx={{float: 'right', maxWidth:'150px'}}>
+                          <TextField
+                            value={stateDict[row.damage]}
+                            label={`${row.name} status`}
+                            id="demo-simple-select"
+                          />
+                        </FormControl>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TableContainer sx={{height: '100vh', width: '100%'}}>
+              <ActionsTaken planAssessment={sampleData as PlanAssessment}/>
+            </TableContainer>
+          </div>
         )
         break;
       case page.SIMULATING:
@@ -199,10 +258,10 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     // }
 
     return (
-      <div>
+      <div style={{display:'flex'}}>
         
 
-        <TableContainer sx={{float:'left', width: '20%', maxHeight:'100vh'}} component={Paper}>
+        <TableContainer sx={{float:'left', width: '40vh', maxHeight:'100vh'}} component={Paper}>
           <TextField
             sx={{marginLeft:'10%'}}
             id="outlined-basic"
@@ -249,7 +308,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                 >
                   <TableCell>{row.name}</TableCell>
                   <TableCell>
-                    <FormControl sx={{float: 'right', minWidth:'150px'}}>
+                    <FormControl sx={{float: 'right', maxWidth:'150px'}}>
                       <InputLabel id="demo-simple-select-label">
                         Status
                       </InputLabel>
@@ -276,7 +335,6 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
             </TableBody>
           </Table>
         </TableContainer>
-        <br />
         {/*<TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableBody>
@@ -306,7 +364,6 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
             </TableBody>
           </Table>
         </TableContainer>*/}
-        <br />
         {this.getMainPage()}
       </div>
     );

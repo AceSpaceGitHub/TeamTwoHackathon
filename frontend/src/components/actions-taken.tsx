@@ -1,4 +1,6 @@
 import {
+    Container,
+    List,
     Paper,
     Table,
     TableBody,
@@ -66,8 +68,17 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
     console.log(rows);
 
     return (
-        <div>
-            <TableContainer component={Paper}>
+        <List>
+            {rows[0].targetState.map(() => (
+            <Container sx={{height:'150px', width:'90%', marginLeft:'5%', marginBottom:'2%', backgroundColor:'#353839'}}>
+
+            </Container>
+            ))}
+        </List>
+            
+    );
+  }
+/*<TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650, maxHeight:'100px' }} aria-label="simple table">
                     <TableCell sx={{borderRight:'groove', borderLeft:'groove', borderBottom:'groove'}}>Target 1</TableCell>
                     <TableCell sx={{borderRight:'groove', borderLeft:'groove', borderBottom:'groove'}}>Target 2</TableCell>
@@ -94,9 +105,5 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
                         ))}
                     </TableBody>
                 </Table>
-            </TableContainer>
-        </div>
-    );
-  }
-
+            </TableContainer>*/
 }
