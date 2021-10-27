@@ -8,6 +8,7 @@ numSorties = 6
 numJets = 19
 numHeloCrews = 2
 numPilots = 21
+numMissiles = 13
 
 missionLengthHours = 7 * 24
 heloTimePadHours = 1
