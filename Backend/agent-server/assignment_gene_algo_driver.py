@@ -4,14 +4,7 @@ from random import randint, random, sample
 from gene_constraints import *
 from gene_utils import tournamentSelection
 
-# 2 jets, 2 pilots, max 4 missiles.
-# Well, let's assume 4 missiles always for now. 
-# We could make it interesting and let it assign <2 missiles
-# and reward/penalize accordingly.
-genesPerSortie = 8
-chromosomeWidth = genesPerSortie * numSorties
-
-def computeFitness(chromosome):
+def computeFitness(chromosome, numSorties, genesPerSortie):
     avgSortieScore = 0
     for i in range(numSorties):
         offsetIdx = genesPerSortie*i
@@ -60,7 +53,7 @@ def tournamentSelection(population, scores, k = 25):
             selectionIdx = idx
     return population[selectionIdx]
 
-def crossover(parent1, parent2, crossoverRate):
+def crossover(parent1, parent2, crossoverRate, chromosomeWidth):
     # Create two kids from two parents.
     kid1, kid2 = parent1.copy(), parent2.copy()
     # Check for recombination chance.
@@ -71,7 +64,7 @@ def crossover(parent1, parent2, crossoverRate):
         kid2 = parent2[:halfWidth] + parent1[halfWidth:]
     return [kid1, kid2]
 
-def mutation(chromosome, mutationRate):
+def mutation(chromosome, mutationRate, genesPerSortie):
     for i in range(len(chromosome)):
         if random() < mutationRate:
             sortieOffset = i % genesPerSortie
@@ -89,9 +82,17 @@ def mutation(chromosome, mutationRate):
 # Would need to look up the Pythonic way of doing this. The footprint
 # of a simple genetic algo like this isn't large anyway.
 # 
-# Also, at the moment this is mostly going to obey the constraints
+# Also, at the moment other than # sorties,
+# this is mostly going to obey the constraints
 # spelled out elsewhere as constants.
-def allocateStrikePackages(numGenerations, numPopulation, crossoverRate, mutationRate):
+def allocateStrikePackages(numGenerations, numPopulation, numSorties, crossoverRate=.99, mutationRate=.10):
+    # 2 jets, 2 pilots, max 4 missiles.
+    # Well, let's assume 4 missiles always for now. 
+    # We could make it interesting and let it assign <2 missiles
+    # and reward/penalize accordingly.
+    genesPerSortie = 8
+    chromosomeWidth = genesPerSortie * numSorties
+
     # Creating the initial population.
     population = []
     for i in range(numPopulation):
@@ -102,10 +103,10 @@ def allocateStrikePackages(numGenerations, numPopulation, crossoverRate, mutatio
             newChromosome += sample(range(0, numPilots), 4)
         population.append(newChromosome)
 
-    best, best_eval = 0, computeFitness(population[0])
+    best, best_eval = 0, computeFitness(population[0], numSorties, genesPerSortie)
     for genIdx in range(numGenerations):
         # Compute fitness of all candidate chromosomes.
-        scores = [computeFitness(c) for c in population]
+        scores = [computeFitness(c, numSorties, genesPerSortie) for c in population]
 
         # Check for new best.
         for i in range(numPopulation):
@@ -120,10 +121,10 @@ def allocateStrikePackages(numGenerations, numPopulation, crossoverRate, mutatio
         children = list()
         for i in range(0, numPopulation, 2):
             parent1, parent2 = selected[i], selected[i+1]
-            for child in crossover(parent1, parent2, crossoverRate):
-                mutation(child, mutationRate)
+            for child in crossover(parent1, parent2, crossoverRate, chromosomeWidth):
+                mutation(child, mutationRate, genesPerSortie)
                 children.append(child)
         population = children
     return best
 
-allocateStrikePackages(50, 1000, .99, .12)
+allocateStrikePackages(50, 1000, 2, .99, .12)
