@@ -5,11 +5,14 @@ import json
 
 import agent_data_converter
 import agent_model_driver
-import agent_or_tools_driver
+import assignment_gene_algo_driver
 
 app = Flask(__name__)
 CORS(app)
 
+# This can take a quite noticeable amount of time
+# that seems to grow as this environment gets more complex.
+# Let's not take the hit per request.
 model = PPO.load("ScenarioEnvironment")
 
 @app.route('/GetPlanAssessment', methods=['POST'])
@@ -31,14 +34,9 @@ def get_plan_assessment():
        targetIds.append(entry['id'])
     planAssessment = agent_data_converter.PredictionToPlanAssessment(prediction, targetIds)
 
-    #vehicleIds = []
-    #for carrier in messageBody['friendlyForces']['carriers']:
-    #    for squadron in carrier['squadrons']:
-    #        for jetId in squadron['jetIds']:
-    #            vehicleIds.append(jetId)
-    #minJetsPerSortie = messageBody['minJetsPerSortie']
-    #targetTimeConstraints = messageBody['targetTimeConstraints']['entries']
-    #jetsToTargetIdx = agent_or_tools_driver.AllocateJetPairsToTargets(
-    #   vehicleIds, minJetsPerSortie, targetTimeConstraints, targetIds, targetIdxSequence)
+    strikePackages = assignment_gene_algo_driver.allocateStrikePackages(50, 1000, len(prediction), .99, .12)
 
-    return planAssessment
+    return {
+       'planAssessment': planAssessment,
+       'strikePackages': strikePackages,
+    }

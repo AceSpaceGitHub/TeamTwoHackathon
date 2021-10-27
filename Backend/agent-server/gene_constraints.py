@@ -4,7 +4,6 @@ from gene_utils import fill, reflectedFill
 # with building into the algorithms. Of course ideally this
 # would be generated on the fly per request/scenario.
 
-numSorties = 6
 numJets = 19
 numHeloCrews = 2
 numPilots = 21
