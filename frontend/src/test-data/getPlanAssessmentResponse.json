@@ -1,106 +1,103 @@
 {
-    "resultingStates": [
-        {
-            "numJets": "50",
-            "numMissiles": "9",
-            "numPilots": "50",
-            "targetIdToDamage":{
-                "entries":[
-                    {"id":"Enemy Carrier A", "damage": "0"},
-                    {"id":"Enemy Carrier B", "damage": "2"},
-                    {"id":"Enemy Cruiser A", "damage": "0"},
-                    {"id":"Enemy Cruiser B", "damage": "0"},
-                    {"id":"Enemy Destroyer A", "damage": "0"},
-                    {"id":"Enemy Destroyer B", "damage": "2"}
+    "planAssessment": {
+        "resultingStates": [
+            {
+                "numJets": "50",
+                "numMissiles": "9",
+                "numPilots": "50",
+                "targetIdToDamage": {
+                    "Enemy Carrier A": "0",
+                    "Enemy Carrier B": "2",
+                    "Enemy Cruiser A": "0",
+                    "Enemy Cruiser B": "0",
+                    "Enemy Destroyer A": "0",
+                    "Enemy Destroyer B": "2"
+                }
+            },
+            {
+                "numJets": "50",
+                "numMissiles": "5",
+                "numPilots": "50",
+                "targetIdToDamage": {
+                    "Enemy Carrier A": "1",
+                    "Enemy Carrier B": "2",
+                    "Enemy Cruiser A": "0",
+                    "Enemy Cruiser B": "0",
+                    "Enemy Destroyer A": "2",
+                    "Enemy Destroyer B": "2"
+                }
+            },
+            {
+                "numJets": "50",
+                "numMissiles": "1",
+                "numPilots": "50",
+                "targetIdToDamage": {
+                    "Enemy Carrier A": "1",
+                    "Enemy Carrier B": "2",
+                    "Enemy Cruiser A": "1",
+                    "Enemy Cruiser B": "2",
+                    "Enemy Destroyer A": "2",
+                    "Enemy Destroyer B": "2"
+                }
+            }
+        ],
+        "sortieActions": [
+            {
+                "missileLoadouts": [
+                    "1",
+                    "1"
+                ],
+                "targetIds": [
+                    "Enemy Destroyer B",
+                    "Enemy Carrier B"
+                ]
+            },
+            {
+                "missileLoadouts": [
+                    "0",
+                    "1"
+                ],
+                "targetIds": [
+                    "Enemy Carrier A",
+                    "Enemy Destroyer A"
+                ]
+            },
+            {
+                "missileLoadouts": [
+                    "0",
+                    "1"
+                ],
+                "targetIds": [
+                    "Enemy Cruiser B",
+                    "Enemy Cruiser A"
                 ]
             }
-        },
-        {
-            "numJets": "50",
-            "numMissiles": "5",
-            "numPilots": "50",
-            "targetIdToDamage": {
-                "entries":[
-                    {"id":"Enemy Carrier A", "damage": "0"},
-                    {"id":"Enemy Carrier B", "damage": "2"},
-                    {"id":"Enemy Cruiser A", "damage": "0"},
-                    {"id":"Enemy Cruiser B", "damage": "0"},
-                    {"id":"Enemy Destroyer A", "damage": "0"},
-                    {"id":"Enemy Destroyer B", "damage": "2"}
-                ]
-            }
-        },
-        {
-            "numJets": "50",
-            "numMissiles": "1",
-            "numPilots": "50",
-            "targetIdToDamage": {
-                "entries": [
-                    {"id":"Enemy Carrier A", "damage": "0"},
-                    {"id":"Enemy Carrier B", "damage": "2"},
-                    {"id":"Enemy Cruiser A", "damage": "0"},
-                    {"id":"Enemy Cruiser B", "damage": "0"},
-                    {"id":"Enemy Destroyer A", "damage": "0"},
-                    {"id":"Enemy Destroyer B", "damage": "2"}
-                ]
-            }
-        },
-        {
-            "numJets": "50",
-            "numMissiles": "-3",
-            "numPilots": "50",
-            "targetIdToDamage": {
-                "entries": [
-                    {"id":"Enemy Carrier A", "damage": "0"},
-                    {"id":"Enemy Carrier B", "damage": "2"},
-                    {"id":"Enemy Cruiser A", "damage": "1"},
-                    {"id":"Enemy Cruiser B", "damage": "0"},
-                    {"id":"Enemy Destroyer A", "damage": "2"},
-                    {"id":"Enemy Destroyer B", "damage": "2"}
-                ]
-            }
-        }
-    ],
-    "sortieActions": [
-        {
-            "missileLoadouts": [
-                "1",
-                "1"
-            ],
-            "targetIds": [
-                "Enemy Destroyer B",
-                "Enemy Carrier B"
-            ]
-        },
-        {
-            "missileLoadouts": [
-                "1",
-                "1"
-            ],
-            "targetIds": [
-                "Enemy Destroyer B",
-                "Enemy Carrier B"
-            ]
-        },
-        {
-            "missileLoadouts": [
-                "1",
-                "1"
-            ],
-            "targetIds": [
-                "Enemy Destroyer B",
-                "Enemy Carrier B"
-            ]
-        },
-        {
-            "missileLoadouts": [
-                "0",
-                "1"
-            ],
-            "targetIds": [
-                "Enemy Carrier A",
-                "Enemy Destroyer A"
-            ]
-        }
+        ]
+    },
+    "strikePackages": [
+        7,
+        4,
+        5,
+        9,
+        1,
+        6,
+        3,
+        7,
+        0,
+        3,
+        2,
+        4,
+        11,
+        12,
+        4,
+        14,
+        16,
+        15,
+        20,
+        17,
+        0,
+        13,
+        2,
+        16
     ]
 }

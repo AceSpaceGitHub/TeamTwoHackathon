@@ -126,5 +126,3 @@ def allocateStrikePackages(numGenerations, numPopulation, numSorties, crossoverR
                 children.append(child)
         population = children
     return best
-
-allocateStrikePackages(50, 1000, 2, .99, .12)
