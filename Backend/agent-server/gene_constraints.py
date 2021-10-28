@@ -70,28 +70,6 @@ fill(pilotJetAffinity, range(10, 14), range(8, 11), sameSquad)
 fill(pilotJetAffinity, range(14, 17), range(11, 15), sameSquad)
 fill(pilotJetAffinity, range(17, 21), range(15, 19), sameSquad)
 
-pilotToCarrier = [[0] * numPilots for i in range(1)]
-fill(pilotToCarrier, range(1), range(0, 14), 0)
-fill(pilotToCarrier, range(1), range(14, 21), 1)
-
-pilotToSquadron = [[0] * numPilots for i in range(1)]
-fill(pilotToCarrier, range(1), range(0, 5), 0)
-fill(pilotToCarrier, range(1), range(5, 10), 1)
-fill(pilotToCarrier, range(1), range(10, 14), 2)
-fill(pilotToCarrier, range(1), range(15, 17), 3)
-fill(pilotToCarrier, range(1), range(17, 21), 4)
-
-jetToCarrier = [[0] * numJets for i in range(1)]
-fill(jetToCarrier, range(1), range(0, 11), 0)
-fill(jetToCarrier, range(1), range(11, 19), 1)
-
-jetToSquadron = [[0] * numJets for i in range(1)]
-fill(pilotToCarrier, range(1), range(0, 4), 0)
-fill(pilotToCarrier, range(1), range(4, 8), 1)
-fill(pilotToCarrier, range(1), range(9, 11), 2)
-fill(pilotToCarrier, range(1), range(11, 15), 3)
-fill(pilotToCarrier, range(1), range(15, 19), 4)
-
 heloToCarrier = {
     0: 0,
     1: 1
