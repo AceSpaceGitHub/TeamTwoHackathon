@@ -1,5 +1,6 @@
 from stable_baselines3.common.env_checker import check_env
 
+from gene_constraints import *
 from scenario_env import ScenarioEnv
 
 def OperatingContextToScenarioEnvironment(operatingContext):
@@ -85,3 +86,14 @@ def PlanAssessmentToSortieMissileRequest(planAssessment):
         for j in range(len(missileLoadouts)):
             sortieMissileRequest[i].append(int(missileLoadouts[j]))
     return sortieMissileRequest
+
+def PlanAssessmentToSortieScheduleRequest(planAssessment):
+    sortieScheduleRequest = {}
+    sortieActions = planAssessment['sortieActions']
+    for i in range(len(sortieActions)):
+        targetIds = sortieActions[i]['targetIds']
+        targetSortieTimes = []
+        for j in range(len(targetIds)):
+            targetSortieTimes.append(targetIdToSortieTimeHours[targetIds[j]])
+        sortieScheduleRequest[i] = max(targetSortieTimes)
+    return sortieScheduleRequest

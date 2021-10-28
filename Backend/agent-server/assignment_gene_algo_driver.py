@@ -54,16 +54,6 @@ def computeFitness(chromosome, numSorties, genesPerSortie, sortieToMissileReques
 
     return avgSortieScore / numSorties
 
-def tournamentSelection(population, scores, k = 25):
-    # Pit individuals against each other in a tournament and select the best.
-    tournamentSize = min(k, len(population))
-    selectionIdx = randint(0, len(population)-1)
-    for i in range(0, tournamentSize-1):
-        idx = randint(0, len(population)-1)
-        if scores[idx] < scores[selectionIdx]:
-            selectionIdx = idx
-    return population[selectionIdx]
-
 def crossover(parent1, parent2, crossoverRate, genesPerSortie, numSorties):
     # Create two kids from two parents.
     kid1, kid2 = parent1.copy(), parent2.copy()

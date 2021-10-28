@@ -13,9 +13,6 @@ minJetsPerSortie = 2
 maxMissilesPerJet = 2
 missionLengthHours = 7 * 24
 heloTimePadHours = 1
-# Actually this is gonna depend on the target...
-# but a ballpark average/common number.
-sortieTimeHours = 3
 
 # Create affinity matrices.
 #
@@ -75,20 +72,11 @@ fill(pilotJetAffinity, range(17, 21), range(15, 19), sameSquad)
 jetMissileCapacity = [maxMissilesPerJet] * numJets
 jetMissileCapacity[3] = jetMissileCapacity[7] = jetMissileCapacity[8] = jetMissileCapacity[16] = 1
 
-heloToCarrier = {
-    0: 0,
-    1: 1
-}
-
-# Not sure if this is realistic -
-# assuming helo crews should only support sorties
-# that originated from the same carrier,
-# but also that each sortie must have flown out of the same carrier.
-sortieToCarrier = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 1,
-    4: 1,
-    5: 1
+targetIdToSortieTimeHours = {
+    "Enemy Carrier A": 4,
+    "Enemy Carrier B": 5,
+    "Enemy Destroyer A": 4,
+    "Enemy Destroyer B": 5,
+    "Enemy Cruiser A": 6,
+    "Enemy Cruiser B": 6,
 }

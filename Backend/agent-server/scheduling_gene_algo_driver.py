@@ -1,144 +1,166 @@
 import random
-from random import randint, random, sample, shuffle
+from random import randint, random, sample
 
 from gene_constraints import *
 from gene_utils import tournamentSelection
 
-def inSameCarrier(heloIdx, sortieIdx):
-    return (heloToCarrier[heloIdx], sortieToCarrier[sortieIdx])
-
-def computeFitness(chromosome):
-    # Work to minimize mission length without
+def computeFitness(chromosome, numSorties, sortieScheduleRequest):
+    # We'll work to minimize mission length without
     # violating too many other constraints.
     chromoItr = iter(chromosome)
     tupledChromo = list(zip(chromoItr, chromoItr, chromoItr))
     sortedByMissionOffset = sorted(tupledChromo, key=lambda elem: elem[0])
 
-    # Assuming any maintenance/downtime doesn't count for last mission.
-    # If that's not true can just add those missing times.
-    latestSortieStart = sortedByMissionOffset[numSorties-1][0] + sortieTimeHours + heloTimePadHours
     earliestSortieStart = sortedByMissionOffset[0][0]
-    totalMissionLength = latestSortieStart - earliestSortieStart
+    latestSortieEnd = earliestSortieStart
+    sortieStarts = []
+    sortieEnds = []
+    for i in range(len(sortedByMissionOffset)):
+        # Assuming any maintenance/downtime doesn't currently count, especially for last mission.
+        # So at the moment this means we aren't deconflicting jets/pilots.
+        sortieStart = sortedByMissionOffset[i][0]
+        sortieStarts.append(sortieStart)
+
+        sortieEnd = sortieStart + heloTimePadHours + sortieScheduleRequest[i] + heloTimePadHours
+        sortieEnds.append(sortieEnd)
+
+        latestSortieEnd = max(latestSortieEnd, sortieEnd)
+    totalMissionLength = latestSortieEnd - earliestSortieStart
 
     # Check top-level mission constraints.
     cost = totalMissionLength
     if (totalMissionLength >= missionLengthHours):
         cost += 100
-    if (earliestSortieStart < missionLengthHours // 4):
-        cost -= 25
-
-    # Check basic constraints per sortie level.
-    for i in range(len(sortedByMissionOffset)):
-        if (inSameCarrier(sortedByMissionOffset[i][1], sortedByMissionOffset[i][2])):
-            cost -= 10
 
     # Check constraints across sortie level.
-    # Should probably take maintenance/downtime into account?
-    # At this level we don't know what's in the sortie necessarily.
-    singleSortieLengthHours = heloTimePadHours + sortieTimeHours + heloTimePadHours
-    sortieStartTimesHours = [x[0] for x in sortedByMissionOffset]
-    sortieEndTimeHours = [x[0] + singleSortieLengthHours for x in sortedByMissionOffset]
 
-    # Are there conflicting helo times?
-    # This should use the pad constant.
+    # First off, are there any conflicting helo times?
+    # This should use the pad constant more.
     # But actually it's only 1, so just check for uniqueness.
-    # Probably better if this ignored times that belonged to a different helo crew.
-    if (2 * numSorties) == len(set(sortieStartTimesHours + sortieEndTimeHours)):
+    #
+    # Probably better if this ignored times that belonged to a different helo crew,
+    # since this is implying multiple helo crews cannot be deployed at the same time.
+    if (2 * numSorties) == len(set(sortieStarts + sortieEnds)):
         # Making this a hard constraint assuming one helo crew can't
         # support many sorties/be in two different places at the same hour/time.
-        cost -= 100
+        cost -= 1000
 
     return cost
 
-def crossover(parent1, parent2, crossoverRate):
+def crossover(parent1, parent2, crossoverRate, genesPerSortie, numSorties):
     # Create two kids from two parents.
     kid1, kid2 = parent1.copy(), parent2.copy()
-    # Check for recombination chance.
+    # We wanna crossover parts of what made the parents
+    # good but should we also risk creating invalid schedules (e.g. repeated tasks)?
+    # Let's just randomly choose an attribute to switch for now.
     if random() < crossoverRate:
-        # We wanna crossover parts of what made the parents
-        # good but should we also risk creating invalid schedules (e.g. repeated tasks)?
-        # Let's just randomly choose an attribute to switch for now.
         crossoverType = random()  * 100
         if 0 < crossoverType and crossoverType < 33:
             for i in range(numSorties):
-                msnOffsetIdx = 3 * i
-                kid1[msnOffsetIdx] = parent2[msnOffsetIdx]
-                kid2[msnOffsetIdx] = parent1[msnOffsetIdx]
+                msnTimeOffset = i * genesPerSortie
+                kid1[msnTimeOffset] = parent2[msnTimeOffset]
+                kid2[msnTimeOffset] = parent1[msnTimeOffset]
         elif 33 < crossoverType and crossoverType < 66:
             for i in range(numSorties):
-                heloIdx = 3 * i + 1
-                kid1[heloIdx] = parent2[heloIdx]
-                kid2[heloIdx] = parent1[heloIdx]
-        else:
+                strikeOffset = i * genesPerSortie + 1
+                kid1[strikeOffset] = parent2[strikeOffset]
+                kid2[strikeOffset] = parent1[strikeOffset]
+        elif 66 < crossoverType and crossoverType < 100:
             for i in range(numSorties):
-                taskIdx = 3 * i + 2
-                kid1[taskIdx] = parent2[taskIdx]
-                kid2[taskIdx] = parent1[taskIdx]
+                heloOffset = i * genesPerSortie + 2
+                kid1[heloOffset] = parent2[heloOffset]
+                kid2[heloOffset] = parent1[heloOffset]
     return [kid1, kid2]
 
-def mutation(chromosome, mutationRate):
+def mutation(chromosome, mutationRate, genesPerSortie, numSorties, remainingMissionTimeHours):
     for i in range(len(chromosome)):
         if random() < mutationRate:
-            idxMod = i % 3
-            if idxMod == 0:
-                chromosome[i] = randint(0, missionLengthHours)
-            elif idxMod == 1:
+            sortieOffset = i % genesPerSortie
+            if (sortieOffset == 0):
+                # Again, kludge? We don't want to lose sorties
+                # starting towards the start of the mission offset.
+                # Freely scramble the other mission offsets though.
+                if (chromosome[i] != 0):
+                    chromosome[i] = randint(0, remainingMissionTimeHours - 1 // 4)
+            elif (sortieOffset == 1):
+                # We can't really repeat tasks.
+                # Choose a random buddy to swap with for now,
+                # maybe we should just create a super penalty for this.
+                sortieTask = chromosome[i]
+                otherSortieTaskIdx = randint(0, numSorties-1) * genesPerSortie + 1
+                otherSortieTask = chromosome[otherSortieTaskIdx]
+                chromosome[i] = otherSortieTask
+                chromosome[otherSortieTaskIdx] = sortieTask
+            elif (sortieOffset == 2):
                 # Well. There's only two helos at the moment.
-                # So randint may not even mutate things.
+                # So randint may not even mutate things. So flip it.
                 flippedHelo = None
-                if (bool(chromosome[i])):
+                if (chromosome[i] == 1):
                     flippedHelo = 0
                 else:
                     flippedHelo = 1
                 chromosome[i] = flippedHelo
-            # Gets tricky mutating the sortie since we can't
-            # repeat them in this context. Let's leave that alone for now.
-            # We could just pick a random entry to swap with.
 
-numPopulation = 1000
-# 1 msn offset, 1 helo crew, 1 strike crew/task per sortie.
-numGenes = numSorties * 3
-numGenerations = 100
-# This is supposed to be relatively high.
-crossoverRate = .99
-# This is supposed to be relatively low.
-mutationRate = .12
+# If we wanted to be super cool, this could maybe be generic and take
+# in the unique crossover/generate initial population/etc functions.
+# Would need to look up the Pythonic way of doing this. The footprint
+# of a simple genetic algo like this isn't large anyway.
+# 
+# Also, at the moment other than # sorties,
+# this is mostly going to obey the constraints
+# spelled out elsewhere as constants.
+def scheduleStrikePackages(numGenerations, numPopulation,
+    remainingMissionTimeHours, sortieScheduleRequest,
+    crossoverRate=.99, mutationRate=.10):
+    # 1 mission time offset, 1 strike package, 1 assigned helo crew.
+    genesPerSortie = 3
+    numSorties = len(sortieScheduleRequest)
 
-# Defining the population size.
-# The population will have n chromosomes where each chromosome has m genes.
-populationSize = (numPopulation, numGenes)
-
-# Creating the initial population.
-population = []
-for i in range(numPopulation):
-    newChromosome = []
-    sortieIndices = list(range(0, numSorties))
-    shuffle(sortieIndices)
-    for i in range(numSorties):
-        newChromosome += sample(range(0, missionLengthHours), 1)
-        newChromosome += sample(range(0, numHeloCrews), 1)
-        newChromosome.append(sortieIndices[i])
-    population.append(newChromosome)
-
-best, best_eval = 0, computeFitness(population[0])
-for genIdx in range(numGenerations):
-    # Compute fitness of all candidate chromosomes.
-    scores = [computeFitness(c) for c in population]
-
-    # Check for new best.
+    # Creating the initial population.
+    population = []
     for i in range(numPopulation):
-        if scores[i] < best_eval:
-            best, best_eval = population[i], scores[i]
-            print(">%d, new best f(%s) = %.3f" % (genIdx,  population[i], scores[i]))
+        newChromosome = []
+        for i in range(numSorties):
+            newChromosome += sample(range(0, remainingMissionTimeHours), 1)
+            newChromosome += [i]
+            newChromosome += sample(range(0, numHeloCrews), 1)
+        
+        # Kludge? Something's gotta go first. But right now
+        # the algo will just procrastinate and push everything to some arbitrary
+        # time(s) before the end of the mission window, so force its hand a little.
+        newChromosome[randint(0, numSorties - 1) * genesPerSortie] = 0
 
-    # Select parents.
-    selected = [tournamentSelection(population, scores) for _ in range(numPopulation)]
+        population.append(newChromosome)
 
-    # Create the next generation from the parents.
-    children = list()
-    for i in range(0, numPopulation, 2):
-        parent1, parent2 = selected[i], selected[i+1]
-        for child in crossover(parent1, parent2, crossoverRate):
-            mutation(child, mutationRate)
-            children.append(child)
-    population = children
+    best, best_eval = 0, computeFitness(population[0], numSorties, sortieScheduleRequest)
+    for genIdx in range(numGenerations):
+        # Compute fitness of all candidate chromosomes.
+        scores = [computeFitness(c, numSorties, sortieScheduleRequest) for c in population]
+
+        # Check for new best.
+        for i in range(numPopulation):
+            if scores[i] < best_eval:
+                best, best_eval = population[i], scores[i]
+                print(">%d, new best f(%s) = %.3f" % (genIdx,  population[i], scores[i]))
+
+        # Select parents.
+        selected = [tournamentSelection(population, scores) for _ in range(numPopulation)]
+
+        # Create the next generation from the parents.
+        children = list()
+        for i in range(0, numPopulation, 2):
+            parent1, parent2 = selected[i], selected[i+1]
+            for child in crossover(parent1, parent2, crossoverRate, genesPerSortie, numSorties):
+                mutation(child, mutationRate, genesPerSortie, numSorties, remainingMissionTimeHours)
+                children.append(child)
+        population = children
+    return best
+
+scheduleStrikePackages(50, 100, 724, {
+    0: 6,
+    1: 6,
+    2: 4,
+    3: 3,
+    4: 4,
+    5: 5,
+})
