@@ -6,6 +6,7 @@ import json
 import agent_data_converter
 import agent_model_driver
 import assignment_gene_algo_driver
+import scheduling_gene_algo_driver
 
 app = Flask(__name__)
 CORS(app)
@@ -34,9 +35,14 @@ def get_plan_assessment():
        targetIds.append(entry['id'])
     planAssessment = agent_data_converter.PredictionToPlanAssessment(prediction, targetIds)
 
-    strikePackages = assignment_gene_algo_driver.allocateStrikePackages(50, 1000, len(prediction), .99, .12)
+    sortieToMissileRequest = agent_data_converter.PlanAssessmentToSortieMissileRequest(planAssessment)
+    strikePackages = assignment_gene_algo_driver.allocateStrikePackages(50, 1000, sortieToMissileRequest, .99, .12)
+
+    sortieScheduleRequest = agent_data_converter.PlanAssessmentToSortieScheduleRequest(planAssessment)
+    strikeSchedule = scheduling_gene_algo_driver.scheduleStrikePackages(50, 100, 7 * 24, sortieScheduleRequest)
 
     return {
        'planAssessment': planAssessment,
        'strikePackages': strikePackages,
+       'strikeSchedule': strikeSchedule
     }

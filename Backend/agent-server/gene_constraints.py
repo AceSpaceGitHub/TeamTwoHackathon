@@ -9,11 +9,10 @@ numHeloCrews = 2
 numPilots = 21
 numMissiles = 13
 
+minJetsPerSortie = 2
+maxMissilesPerJet = 2
 missionLengthHours = 7 * 24
 heloTimePadHours = 1
-# Actually this is gonna depend on the target...
-# but a ballpark average/common number.
-sortieTimeHours = 3
 
 # Create affinity matrices.
 #
@@ -70,42 +69,14 @@ fill(pilotJetAffinity, range(10, 14), range(8, 11), sameSquad)
 fill(pilotJetAffinity, range(14, 17), range(11, 15), sameSquad)
 fill(pilotJetAffinity, range(17, 21), range(15, 19), sameSquad)
 
-pilotToCarrier = [[0] * numPilots for i in range(1)]
-fill(pilotToCarrier, range(1), range(0, 14), 0)
-fill(pilotToCarrier, range(1), range(14, 21), 1)
+jetMissileCapacity = [maxMissilesPerJet] * numJets
+jetMissileCapacity[3] = jetMissileCapacity[7] = jetMissileCapacity[8] = jetMissileCapacity[16] = 1
 
-pilotToSquadron = [[0] * numPilots for i in range(1)]
-fill(pilotToCarrier, range(1), range(0, 5), 0)
-fill(pilotToCarrier, range(1), range(5, 10), 1)
-fill(pilotToCarrier, range(1), range(10, 14), 2)
-fill(pilotToCarrier, range(1), range(15, 17), 3)
-fill(pilotToCarrier, range(1), range(17, 21), 4)
-
-jetToCarrier = [[0] * numJets for i in range(1)]
-fill(jetToCarrier, range(1), range(0, 11), 0)
-fill(jetToCarrier, range(1), range(11, 19), 1)
-
-jetToSquadron = [[0] * numJets for i in range(1)]
-fill(pilotToCarrier, range(1), range(0, 4), 0)
-fill(pilotToCarrier, range(1), range(4, 8), 1)
-fill(pilotToCarrier, range(1), range(9, 11), 2)
-fill(pilotToCarrier, range(1), range(11, 15), 3)
-fill(pilotToCarrier, range(1), range(15, 19), 4)
-
-heloToCarrier = {
-    0: 0,
-    1: 1
-}
-
-# Not sure if this is realistic -
-# assuming helo crews should only support sorties
-# that originated from the same carrier,
-# but also that each sortie must have flown out of the same carrier.
-sortieToCarrier = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 1,
-    4: 1,
-    5: 1
+targetIdToSortieTimeHours = {
+    "Enemy Carrier A": 4,
+    "Enemy Carrier B": 5,
+    "Enemy Destroyer A": 4,
+    "Enemy Destroyer B": 5,
+    "Enemy Cruiser A": 6,
+    "Enemy Cruiser B": 6,
 }
