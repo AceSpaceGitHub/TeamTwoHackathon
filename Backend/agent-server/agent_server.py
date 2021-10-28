@@ -34,7 +34,8 @@ def get_plan_assessment():
        targetIds.append(entry['id'])
     planAssessment = agent_data_converter.PredictionToPlanAssessment(prediction, targetIds)
 
-    strikePackages = assignment_gene_algo_driver.allocateStrikePackages(50, 1000, len(prediction), .99, .12)
+    sortieToMissileRequest = agent_data_converter.PlanAssessmentToSortieMissileRequest(planAssessment)
+    strikePackages = assignment_gene_algo_driver.allocateStrikePackages(50, 1000, sortieToMissileRequest, .99, .12)
 
     return {
        'planAssessment': planAssessment,

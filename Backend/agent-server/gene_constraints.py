@@ -9,6 +9,8 @@ numHeloCrews = 2
 numPilots = 21
 numMissiles = 13
 
+minJetsPerSortie = 2
+maxMissilesPerJet = 2
 missionLengthHours = 7 * 24
 heloTimePadHours = 1
 # Actually this is gonna depend on the target...
@@ -69,6 +71,9 @@ fill(pilotJetAffinity, range(5, 10), range(4, 8), sameSquad)
 fill(pilotJetAffinity, range(10, 14), range(8, 11), sameSquad)
 fill(pilotJetAffinity, range(14, 17), range(11, 15), sameSquad)
 fill(pilotJetAffinity, range(17, 21), range(15, 19), sameSquad)
+
+jetMissileCapacity = [maxMissilesPerJet] * numJets
+jetMissileCapacity[3] = jetMissileCapacity[7] = jetMissileCapacity[8] = jetMissileCapacity[16] = 1
 
 heloToCarrier = {
     0: 0,

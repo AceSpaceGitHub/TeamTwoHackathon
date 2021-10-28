@@ -75,3 +75,13 @@ def PredictionToPlanAssessment(prediction, targetIds):
         'sortieActions': sortieActions,
         'resultingStates': resultingStates
     }
+
+def PlanAssessmentToSortieMissileRequest(planAssessment):
+    sortieMissileRequest = {}
+    sortieActions = planAssessment['sortieActions']
+    for i in range(len(sortieActions)):
+        sortieMissileRequest[i] = []
+        missileLoadouts = sortieActions[i]['missileLoadouts']
+        for j in range(len(missileLoadouts)):
+            sortieMissileRequest[i].append(int(missileLoadouts[j]))
+    return sortieMissileRequest
