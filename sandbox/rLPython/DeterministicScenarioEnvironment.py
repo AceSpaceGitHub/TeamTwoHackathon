@@ -71,7 +71,7 @@ class DeterministicScenario:
         for sorti in sortiArray:
             if state[sorti][ship1] and state[sorti][ship2]:
                 canAttack = True
-                reward = 2
+                reward = 20
                 break
         return canAttack, reward
     def shouldAttack(self, state, defenseArray, ship):
@@ -120,10 +120,8 @@ class DeterministicScenario:
         ship2Index = action[1]
 
         canAttack , canAttackReward = self.canAttack(state, sortieArray, ship1Index, ship2Index)
-
+        reward += canAttackReward
         if canAttack:
-            shouldAttack, shouldAttackReward1 = self.shouldAttack(state, sortieArray, ship1Index)
-            shouldAttack2, shouldAttackReward2 = self.shouldAttack(state, sortieArray, ship2Index)
 
             shotDown1 = self.defendShip(state, defenseArray, ship1Index)
             shotDown2 = self.defendShip(state, defenseArray, ship2Index)
@@ -140,18 +138,24 @@ class DeterministicScenario:
                     state["assets"][0] -= 1
                     state["assets"][1] -= 1
 
+            shouldAttack, shouldAttackReward = self.shouldAttack(state, defenseArray, ship1Index)
+            reward += shouldAttackReward
             self.shootShip(state, ship1Index)
             state["missiles"] -= 1
             if action[2] == 1:
+                shouldAttack, shouldAttackReward = self.shouldAttack(state, defenseArray, ship1Index)
+                reward += shouldAttackReward
                 self.shootShip(state, ship1Index)
                 state["missiles"] -= 1
+            shouldAttack, shouldAttackReward = self.shouldAttack(state, defenseArray, ship2Index)
+            reward += shouldAttackReward
             self.shootShip(state, ship2Index)
             state["missiles"] -= 1
             if action[3] == 1:
+                shouldAttack, shouldAttackReward = self.shouldAttack(state, defenseArray, ship2Index)
+                reward += shouldAttackReward
                 self.shootShip(state, ship2Index)
                 state["missiles"] -= 1
-
-            reward = canAttackReward + shouldAttackReward1 + shouldAttackReward2
         else:
             # Can't attack we are done
             return state, canAttackReward, False, info
