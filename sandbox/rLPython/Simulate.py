@@ -1,16 +1,18 @@
+
+from stable_baselines3 import PPO
+import gym
 from gym import Env
-from gym.spaces import Discrete, Dict, MultiBinary, MultiDiscrete, Box
+from gym.spaces import Discrete, Dict, MultiBinary, MultiDiscrete
 import numpy as np
 import random
-from stable_baselines3 import PPO
 
-class ScenarioManager:
+class DeterministicScenario:
     def getActionSpace(self):
         return MultiDiscrete([6, 6, 2, 2])
     def getObservationSpace(self):
         return Dict({"missiles": Discrete(100), 
-        "expectedShipDamage": MultiDiscrete([3,3,3,3,3,3]), 
-        "currentShipDamage": MultiDiscrete([3,3,3,3,3,3]), 
+        "expectedShipDamage": MultiDiscrete([100,100,100,100,100,100]), 
+        "currentShipDamage": MultiDiscrete([100,100,100,100,100,100]), 
         "target1Defense": MultiDiscrete([100,100,100,100,100,100]),
         "target2Defense": MultiDiscrete([100,100,100,100,100,100]),
         "target3Defense": MultiDiscrete([100,100,100,100,100,100]),
@@ -27,12 +29,12 @@ class ScenarioManager:
     def getRandomizedState(self):
         return {"missiles": random.randint(1, 99),
          "expectedShipDamage": 
-         np.array([random.randint(0, 2), 
-         random.randint(0, 2), 
-         random.randint(0, 2), 
-         random.randint(0, 2), 
-         random.randint(0, 2), 
-         random.randint(0, 2)]), 
+         np.array([random.randint(0, 4), 
+         random.randint(0, 4), 
+         random.randint(0, 4), 
+         random.randint(0, 4), 
+         random.randint(0, 4), 
+         random.randint(0, 4)]), 
          "currentShipDamage": np.array([0,0,0,0,0,0]),
          "target1Defense": np.array([0,0,25,0,15,0]),
          "target2Defense": np.array([0,0,0,25,0,15]),
@@ -46,12 +48,6 @@ class ScenarioManager:
          "target4Targets": np.array([0, 1, 0, 1 , 0, 0]),
          "target5Targets": np.array([0, 0, 0, 0 , 1, 1]),
          "target6Targets": np.array([0, 0, 0, 0 , 1, 1]),
-        #  "target1Targets": np.array([1, random.randint(0,1), random.randint(0,1), random.randint(0,1), random.randint(0,1), random.randint(0,1)]),
-        #  "target2Targets": np.array([random.randint(0,1), 1, random.randint(0,1), random.randint(0,1), random.randint(0,1), random.randint(0,1)]),
-        #  "target3Targets": np.array([random.randint(0,1), random.randint(0,1), 1, random.randint(0,1), random.randint(0,1), random.randint(0,1)]),
-        #  "target4Targets": np.array([random.randint(0,1), random.randint(0,1), random.randint(0,1), 1, random.randint(0,1), random.randint(0,1)]),
-        #  "target5Targets": np.array([random.randint(0,1), random.randint(0,1), random.randint(0,1), random.randint(0,1) , 1, random.randint(0,1)]),
-        #  "target6Targets": np.array([random.randint(0,1), random.randint(0,1), random.randint(0,1), random.randint(0,1) , random.randint(0,1), 1]),
          "assets": np.array([random.randint(1, 99), random.randint(1, 99)])}
     def getState(self, numberOfmissiles, numberOfJets, numberOfPilots, tD1, tD2, tD3, tD4, tD5, tD6):
         return {"missiles": numberOfmissiles,
@@ -72,12 +68,12 @@ class ScenarioManager:
          "assets": np.array([numberOfJets ,numberOfPilots])}
     def canAttack(self, state, sortiArray, ship1, ship2):
         canAttack = False
-        reward = -100
+        reward = -10
         # Check if can attack
         for sorti in sortiArray:
             if state[sorti][ship1] and state[sorti][ship2]:
                 canAttack = True
-                reward = 2
+                reward = 20
                 break
         return canAttack, reward
     def shouldAttack(self, state, defenseArray, ship):
@@ -91,11 +87,11 @@ class ScenarioManager:
                 reward = 0
             else:
                 # no threat and already at expected damage
-                reward = -200
+                reward = -20
                 shouldAttack = False
         else:
             # targetted a ship worth targetting
-            reward = 50
+            reward = 100
         return shouldAttack, reward
     def defendShip(self, state, defenseArray, ship):
         shotDown = False
@@ -106,20 +102,11 @@ class ScenarioManager:
                 if(roll <= state[defenseArray[ship]][index]):
                     shotDown = True
         return shotDown
-    def shootShip(self, state, ship, defenseArray):
+    def shootShip(self, state, defenseArray, ship):
         reward = 0
-        roll = random.randint(0, 100)
-        if roll <= 60:
-            # Should we reward more here?
-            state["currentShipDamage"][ship] = max(1, state["currentShipDamage"][ship])
-            for index in defenseArray:
-                state[index][ship] = 0
-        
-            roll = random.randint(0, 100)
-            if roll <= 50:
-                # Should we reward more here?
-                state["currentShipDamage"][ship] = max(2, state["currentShipDamage"][ship])
-        
+
+        state["currentShipDamage"][ship] += 1
+
         return reward
     def step(self, state, action):
         # Set placeholder for info
@@ -134,11 +121,14 @@ class ScenarioManager:
         ship1Index = action[0]
         ship2Index = action[1]
 
-        canAttack , canAttackReward = self.canAttack(state, sortieArray, ship1Index, ship2Index)
+        if action[2] == 1:
+            reward += 10
+        if action[3] == 1:
+            reward += 10
 
+        canAttack , canAttackReward = self.canAttack(state, sortieArray, ship1Index, ship2Index)
+        reward += canAttackReward
         if canAttack:
-            shouldAttack, shouldAttackReward1 = self.shouldAttack(state, sortieArray, ship1Index)
-            shouldAttack2, shouldAttackReward2 = self.shouldAttack(state, sortieArray, ship2Index)
 
             shotDown1 = self.defendShip(state, defenseArray, ship1Index)
             shotDown2 = self.defendShip(state, defenseArray, ship2Index)
@@ -155,28 +145,37 @@ class ScenarioManager:
                     state["assets"][0] -= 1
                     state["assets"][1] -= 1
 
-            self.shootShip(state, ship1Index, defenseArray)
+            shouldAttack, shouldAttackReward = self.shouldAttack(state, defenseArray, ship1Index)
+            reward += shouldAttackReward
+            self.shootShip(state, defenseArray, ship1Index)
             state["missiles"] -= 1
             if action[2] == 1:
-                self.shootShip(state, ship1Index, defenseArray)
+                shouldAttack, shouldAttackReward = self.shouldAttack(state, defenseArray, ship1Index)
+                reward += shouldAttackReward
+                self.shootShip(state, defenseArray, ship1Index)
                 state["missiles"] -= 1
-            self.shootShip(state, ship2Index, defenseArray)
+            shouldAttack, shouldAttackReward = self.shouldAttack(state, defenseArray, ship2Index)
+            reward += shouldAttackReward
+            self.shootShip(state, defenseArray, ship2Index)
             state["missiles"] -= 1
             if action[3] == 1:
-                self.shootShip(state, ship2Index, defenseArray)
+                shouldAttack, shouldAttackReward = self.shouldAttack(state, defenseArray, ship2Index)
+                reward += shouldAttackReward
+                self.shootShip(state, defenseArray, ship2Index)
                 state["missiles"] -= 1
-
-            reward = canAttackReward + shouldAttackReward1 + shouldAttackReward2
         else:
             # Can't attack we are done
             return state, canAttackReward, False, info
         
         # ############# Ideas #################
-        # Add bonus for end state for each asset, maybe more for pilots and jets
-        # Add offset rewards for pilots and jets
+        # Count up assets instead of down. Add a cap and remove end condition for assets
+        # Change Reward/Loss system for expected damage.
+        #   Expected damage is now Expected hits. Remove Rolls
         # Add a calculated ratio reward for threats in the defending arrays
+        # Add in standard deviation for rewards to encourage spreading out more hits when missles are available.
+        #   Prio higher expected hits targets.
 
-        # Add penatly for going over on assets
+        # Add penalty for going over on assets
         if state["missiles"] < 0:
             reward -= 200
 
@@ -193,7 +192,10 @@ class ScenarioManager:
                 break
 
         if isExpectedDamageMet:
-            reward += 300
+            reward += 100
+            reward += max(0, state["missiles"])*10
+            reward += max(0, state["assets"][0])*5
+            reward += max(0, state["assets"][1])*5
             done = True
 
         if state["missiles"] <= 0:
@@ -205,9 +207,9 @@ class ScenarioManager:
         # Return step information
         return state, reward, done, info
 
-class ScenarioEnv(Env):
+class DeterministicScenarioEnvironment(Env):
     def __init__(self, numberOfmissiles, numberOfJets, numberOfPilots, tD1, tD2, tD3, tD4, tD5, tD6):
-        manager = ScenarioManager()
+        manager = DeterministicScenario()
         self.manager = manager
         # Actions we can take: 0 - Do Nothing, 1 - Launch
         self.action_space = manager.getActionSpace()
@@ -239,13 +241,28 @@ class ScenarioEnv(Env):
         self.state = self.manager.getState(self.numberOfmissiles, self.numberOfJets, self.numberOfPilots, self.tD1, self.tD2, self.tD3, self.tD4, self.tD5, self.tD6)
         return self.state
 
-def simulate():
-    model = PPO.load("Long_PPO")
+def shootShip(currentDamage):
+    newDamage = currentDamage
+    roll = random.randint(0, 100)
+    if roll <= 60:
+        # Should we reward more here?
+        newDamage = max(1, currentDamage)
+    
+        roll = random.randint(0, 100)
+        if roll <= 50:
+            # Should we reward more here?
+            newDamage = max(2, currentDamage)
+    return newDamage
 
-    scenarioEnvironment = ScenarioEnv(13, 19, 21, 2, 1, 1, 1, 0, 0)
+def simulate(numberOfMissiles, numberOfJets, numberOfPilots, damage1, damage2, damage3, damage4, damage5, damage6, confidence = 2):
+    model = PPO.load("ScenarioEnvironment")
+
+    scenarioEnvironment = DeterministicScenarioEnvironment(numberOfMissiles, numberOfJets, numberOfPilots, damage1*confidence, damage2*confidence, damage3*confidence, damage4*confidence, damage5*confidence, damage6*confidence)
     observation = scenarioEnvironment.reset()
 
     predictions = []
+    damageArray = [damage1, damage2, damage3, damage4, damage5, damage6]
+    solvedArray = [0, 0, 0, 0, 0, 0]
 
     for x in range(0, 100+1):
         sorties = []
@@ -261,6 +278,7 @@ def simulate():
             observation["assets"].tolist()]])
 
         solved = 0
+        solvedArray = [0, 0, 0, 0, 0, 0]
         for x in range(0, 1000):
             observation = scenarioEnvironment.reset()
             for sortie in sorties:
@@ -268,14 +286,34 @@ def simulate():
             
             isExpectedDamageMet = True
             for shipIndex in range(0, 6):
-                if observation["currentShipDamage"][shipIndex] < observation["expectedShipDamage"][shipIndex]:
+                damage = 0
+                for shot in range(0, observation["currentShipDamage"][shipIndex]):
+                    damage = shootShip(damage)
+
+                if damage < damageArray[shipIndex]:
+                    solvedArray[shipIndex] += 1
                     isExpectedDamageMet = False
                     break
 
             if isExpectedDamageMet and observation["missiles"] >= 0 and observation["assets"][0] >=0 and observation["assets"][1] >= 0:
                 solved += 1
-        predictions.append([(solved/1000.0)*100, sorties])
+        predictions.append([(solved/1000.0)*100, solvedArray, sorties])
 
     predictions.sort(reverse=True, key=lambda p: p[0])
     scenarioEnvironment.close()
-    return predictions[0:5]
+
+    predictionResults = []
+
+    for prediction in predictions[0:1]:
+        actions = []
+        for sortie in prediction[2]:
+            sortieResult = {"Actions":sortie[0], "Missiles": sortie[1][0], "ExpectedHits": sortie[1][1], "CurrentHits": sortie[1][2], "Assets": sortie[1][3]}
+            actions.append(sortieResult)
+        
+        predictionResult = {"SuccessRate": prediction[0], "TargetRates": prediction[1], "Actions": actions}
+        predictionResults.append(predictionResult)
+    
+
+    jsonResults = {"Results": predictionResults}
+
+    return jsonResults
