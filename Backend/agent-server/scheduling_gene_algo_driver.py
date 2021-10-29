@@ -155,12 +155,3 @@ def scheduleStrikePackages(numGenerations, numPopulation,
                 children.append(child)
         population = children
     return best
-
-scheduleStrikePackages(50, 100, 724, {
-    0: 6,
-    1: 6,
-    2: 4,
-    3: 3,
-    4: 4,
-    5: 5,
-})

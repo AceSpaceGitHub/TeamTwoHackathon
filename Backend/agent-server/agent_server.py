@@ -36,13 +36,14 @@ def get_plan_assessment():
     planAssessment = agent_data_converter.PredictionToPlanAssessment(prediction, targetIds)
 
     sortieToMissileRequest = agent_data_converter.PlanAssessmentToSortieMissileRequest(planAssessment)
-    strikePackages = assignment_gene_algo_driver.allocateStrikePackages(50, 1000, sortieToMissileRequest, .99, .12)
+    strikePackages = assignment_gene_algo_driver.allocateStrikePackages(50, 100, sortieToMissileRequest, .99, .12)
 
-    sortieScheduleRequest = agent_data_converter.PlanAssessmentToSortieScheduleRequest(planAssessment)
-    strikeSchedule = scheduling_gene_algo_driver.scheduleStrikePackages(50, 100, 7 * 24, sortieScheduleRequest)
+    sortieToTargetIds, sortieToLengthHours = agent_data_converter.PlanAssessmentToRequestedSchedule(planAssessment)
+    strikeSchedule = scheduling_gene_algo_driver.scheduleStrikePackages(50, 100, 7 * 24, sortieToLengthHours)
 
+    assembledSortiesActions = agent_data_converter.AssembleSortieData(
+       planAssessment, strikePackages, strikeSchedule,
+       sortieToTargetIds, sortieToLengthHours, sortieToMissileRequest)
     return {
-       'planAssessment': planAssessment,
-       'strikePackages': strikePackages,
-       'strikeSchedule': strikeSchedule
+       'resultingActions': assembledSortiesActions
     }

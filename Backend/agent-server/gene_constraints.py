@@ -1,9 +1,13 @@
+import datetime
 from gene_utils import fill, reflectedFill
 
 # This all defines scenario data we can mess around
 # with building into the algorithms. Of course ideally this
 # would be generated on the fly per request/scenario.
 
+missionStartTime = "08:00:00"
+
+numCarriers = 2
 numJets = 19
 numHeloCrews = 2
 numPilots = 21
@@ -71,6 +75,10 @@ fill(pilotJetAffinity, range(17, 21), range(15, 19), sameSquad)
 
 jetMissileCapacity = [maxMissilesPerJet] * numJets
 jetMissileCapacity[3] = jetMissileCapacity[7] = jetMissileCapacity[8] = jetMissileCapacity[16] = 1
+
+isJetOnCarrier = [[0] * numJets for i in range(numCarriers)]
+fill(isJetOnCarrier, range(0, 1), range(0, 11), 1)
+fill(isJetOnCarrier, range(1, 2), range(11, 19), 1)
 
 targetIdToSortieTimeHours = {
     "Enemy Carrier A": 4,
