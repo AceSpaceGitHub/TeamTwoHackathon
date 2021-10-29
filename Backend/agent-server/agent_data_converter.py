@@ -10,16 +10,9 @@ def OperatingContextToScenarioEnvironment(operatingContext):
     to scenario environment agent can understand.
     """
 
-    # We anticipate using num jets/pilots, just the scenario
-    # doesn't officially take them in yet.
-    numJets = 0
-    numPilots = 0
-    numMissiles = 0
-    for carrier in operatingContext['friendlyForces']['carriers']:
-        for squadron in carrier['squadrons']:
-            numJets += len(squadron['jetIds'])
-            numPilots += len(squadron['pilotIds'])
-            numMissiles += len(squadron['missileIds'])
+    numJets = operatingContext['numJets']
+    numPilots = operatingContext['numPilots']
+    numMissiles = operatingContext['numMissiles']
 
     desiredDamages = []
     for entry in operatingContext['intendedTargetIdToDamage']['entries']:
