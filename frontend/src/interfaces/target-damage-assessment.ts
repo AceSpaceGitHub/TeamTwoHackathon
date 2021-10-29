@@ -11,9 +11,9 @@ import { DamageType } from "../types/damage-type";
     /**
      * Target damage.
      */
-    damage: DamageType;
+    damage?: DamageType;
 
-    chanceOfSuccess: number;
+    chanceOfSuccess?: number;
 }
 
 /**

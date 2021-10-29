@@ -5,6 +5,14 @@ export enum actionType{
     Sortie
 }
 
+export interface resultState{
+    targetState: TargetIdToDamage;
+    missilesRemaining: number;
+    peopleRemaining: number;
+    vehiclesRemaining: number;
+
+}
+
 export interface action{
 
     type : actionType;
@@ -22,5 +30,5 @@ export interface newPlanAssessment {
 
     resultingActions: action[];
 
-    resultingState: TargetIdToDamage;
+    resultingState: resultState;
 }

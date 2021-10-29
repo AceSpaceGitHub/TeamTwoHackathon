@@ -1,0 +1,125 @@
+{
+    "resultingActions": [
+        {
+            "type" : 0,
+            "targetList": [],
+            "involvedVehicles": ["Helo1","Helo2"],
+            "departingCarrier": "carrier1",
+            "involvedPersonelle": ["Helo Crew 1","Helo Crew 2"],
+            "numberOfMissiles": [],
+            "startTime": "8:00:54",
+            "endTime": "9:00:32"
+            
+        },
+        {
+            "type" : 1,
+            "targetList": ["Enemy Carrier A", "Enemy Destroyer B"],
+            "involvedVehicles": ["Jet1","Jet2"],
+            "departingCarrier": "carrier2",
+            "involvedPersonelle": ["Pilot1","Pilot2"],
+            "numberOfMissiles": [2,1],
+            "startTime": "9:00:54",
+            "endTime": "9:30:32"
+            
+        },
+        {
+            "type" : 0,
+            "targetList": [],
+            "involvedVehicles": ["Helo3","Helo4"],
+            "departingCarrier": "carrier2",
+            "involvedPersonelle": ["Helo Crew 3","Helo Crew 4"],
+            "numberOfMissiles": [],
+            "startTime": "10:00:54",
+            "endTime": "11:00:32"
+            
+        },
+        {
+            "type" : 1,
+            "targetList": ["Enemy Carrier B, Enemy Destroyer A"],
+            "involvedVehicles": ["Jet3","Jet4"],
+            "departingCarrier": "carrier1",
+            "involvedPersonelle": ["Pilot3","Pilot4"],
+            "numberOfMissiles": [1,1],
+            "startTime": "11:00:54",
+            "endTime": "11:30:32"
+            
+        },
+        {
+            "type" : 0,
+            "targetList": [],
+            "involvedVehicles": ["Helo1","Helo2"],
+            "departingCarrier": "carrier1",
+            "involvedPersonelle": ["Helo Crew 1","Helo Crew 2"],
+            "numberOfMissiles": [],
+            "startTime": "12:00:54",
+            "endTime": "13:00:32"
+            
+        },
+        {
+            "type" : 1,
+            "targetList": ["Enemy Carrier B, Enemy Destroyer A"],
+            "involvedVehicles": ["Jet1","Jet2"],
+            "departingCarrier": "carrier2",
+            "involvedPersonelle": ["Pilot1","Pilot2"],
+            "numberOfMissiles": [1,2],
+            "startTime": "13:00:54",
+            "endTime": "13:30:32"
+            
+        },
+        {
+            "type" : 0,
+            "targetList": [],
+            "involvedVehicles": ["Helo3","Helo4"],
+            "departingCarrier": "carrier2",
+            "involvedPersonelle": ["Helo Crew 3","Helo Crew 4"],
+            "numberOfMissiles": [],
+            "startTime": "14:00:54",
+            "endTime": "15:00:32"
+            
+        },
+        {
+            "type" : 1,
+            "targetList": ["Enemy Carrier A"],
+            "involvedVehicles": ["Jet3","Jet4"],
+            "departingCarrier": "carrier1",
+            "involvedPersonelle": ["Pilot3","Pilot4"],
+            "numberOfMissiles": [1,1],
+            "startTime": "15:00:54",
+            "endTime": "16:00:32"
+            
+        }
+    ],
+    "resultingState": {
+        "targetState":{
+            "entries": [
+                {
+                    "id": "Enemy Carrier A",
+                    "chanceOfSuccess": 83
+                },
+                {
+                    "id": "Enemy Carrier B",
+                    "chanceOfSuccess": 75
+                },
+                {
+                    "id": "Enemy Destroyer A",
+                    "chanceOfSuccess": 92
+                },
+                {
+                    "id": "Enemy Destroyer B",
+                    "chanceOfSuccess": 80
+                },
+                {
+                    "id": "Enemy Cruiser A",
+                    "chanceOfSuccess": 100
+                },
+                {
+                    "id": "Enemy Cruiser B",
+                    "chanceOfSuccess": 100
+                }
+            ]
+        },
+        "missilesRemaining": 5,
+        "peopleRemaining": 15,
+        "vehiclesRemaining": 10
+    }
+}

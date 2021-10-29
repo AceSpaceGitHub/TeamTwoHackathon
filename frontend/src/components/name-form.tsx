@@ -2,7 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 
 import {
-  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -12,7 +11,6 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   TextField,
 } from "@mui/material";
@@ -25,7 +23,10 @@ import { updatePlanAssessment } from "./sim-actions";
 import { DamageType } from "../types/damage-type";
 import { ActionsTaken } from "./actions-taken";
 import _, { initial } from "lodash";
-const sampleData = require('../test-data/getPlanAssessmentResponse.json');
+import { newPlanAssessment } from "../interfaces/new-store";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import LoadingButton from "@mui/lab/LoadingButton";
+
 
 enum page {
   INITIAL,
@@ -40,6 +41,7 @@ interface NameState {
   missiles: number,
   ships: {name:string, damage: DamageType}[],
   page: page;
+  loading: boolean;
 }
 
 const stateDict = {
@@ -57,7 +59,7 @@ export interface StoreStateProps {
   /**
    * Current plan assessment.
    */
-  planAssessment: PlanAssessment | null;
+  //planAssessment: newPlanAssessment | null;
 
   
 }
@@ -71,10 +73,14 @@ export interface DispatchProps {
   updatePlanAssessment: (planAssessment: PlanAssessment) => void;
 }
 
+export interface TestProps{
+  planAssessment: newPlanAssessment | null;
+}
+
 /**
  * Component props.
  */
-export type NameFormProps = StoreStateProps & DispatchProps;
+export type NameFormProps = StoreStateProps & DispatchProps & TestProps;
 
 export class NameForm extends React.Component<NameFormProps, NameState> {
   constructor(props: NameFormProps) {
@@ -86,6 +92,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       missiles: 0,
       ships: [],
       page: page.INITIAL,
+      loading: false,
     };
 
     this.handleTextChange = this.handleTextChange.bind(this);
@@ -161,16 +168,19 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       case page.INITIAL:
         return(
           <TableContainer sx={{height:'100vh', width: '80%'}}>
-            <Button
+            <LoadingButton
             sx={{top:'40%', left:'40%'}}
               variant="contained"
               onClick={() => {
-                alert(this.state.missiles + " missiles");
-                this.setState({page: page.RESULTS})
+                this.setState({loading: true})
+                setTimeout(() => this.setState({ page: page.RESULTS }), 7000);
               }}
+              endIcon={<PlayArrowIcon />}
+              loadingPosition="end"
+              loading={this.state.loading}
             >
               Simulate
-            </Button>
+            </LoadingButton>
           </TableContainer>
         );
       case page.RESULTS:
@@ -184,7 +194,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                 variant="outlined"
                 margin="normal"
                 type="string"
-                value={this.state.missiles}
+                value={this.props.planAssessment?.resultingState.missilesRemaining}
                 InputLabelProps={{ shrink: true }}
               />
               <TextField
@@ -194,7 +204,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                   variant="outlined"
                   margin="normal"
                   type="string"
-                  value={this.state.numJets}
+                  value={this.props.planAssessment?.resultingState.vehiclesRemaining}
                   InputLabelProps={{ shrink: true }}
                 />
               <TextField
@@ -204,22 +214,22 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                   variant="outlined"
                   margin="normal"
                   type="string"
-                  value={this.state.numPilots}
+                  value={this.props.planAssessment?.resultingState.peopleRemaining}
                   InputLabelProps={{ shrink: true }}
                 />
               <Table sx={{ }} aria-label="simple table">
                 <TableBody>
-                  {this.state.ships.map((row) => (
+                  {this.props.planAssessment?.resultingState.targetState.entries.map((target) => (
                     <TableRow
-                      key={row.name}
+                      key={target.id}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
-                      <TableCell>{row.name}</TableCell>
+                      <TableCell>{target.id}</TableCell>
                       <TableCell>
                         <FormControl sx={{float: 'right', maxWidth:'150px'}}>
                           <TextField
-                            value={stateDict[row.damage]}
-                            label={`${row.name} status`}
+                            value={target.chanceOfSuccess ?? 0}
+                            label={`Probability of success`}
                             id="demo-simple-select"
                           />
                         </FormControl>
@@ -230,7 +240,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
               </Table>
             </TableContainer>
             <TableContainer sx={{height: '100vh', display:'contents', overflowY:'scroll'}}>
-              <ActionsTaken planAssessment={sampleData as PlanAssessment}/>
+              <ActionsTaken planAssessment={this.props.planAssessment as newPlanAssessment}/>
             </TableContainer>
           </div>
         )
@@ -258,7 +268,12 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     // }
 
     return (
-      <div style={{display:'block'}}>
+      <div style={{
+        backgroundImage: "url(../../img/image.jpg)",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "top",
+      }}>
         
 
         <TableContainer sx={{float:'left', width: '40vh', height:'fit-content'}} component={Paper}>
@@ -381,7 +396,7 @@ const mapStoreToProps = (state: {
 }): StoreStateProps => {
   return {
     operatingContext: state[SIM_REDUCER_KEY].operatingContext,
-    planAssessment:state[SIM_REDUCER_KEY].planAssessment,
+    //planAssessment:state[SIM_REDUCER_KEY].planAssessment,
   };
 };
 
