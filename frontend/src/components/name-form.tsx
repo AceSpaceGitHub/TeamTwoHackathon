@@ -2,7 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 
 import {
-  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -25,6 +24,8 @@ import { DamageType } from "../types/damage-type";
 import { ActionsTaken } from "./actions-taken";
 import _, { initial } from "lodash";
 import { newPlanAssessment } from "../interfaces/new-store";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 
 enum page {
@@ -40,6 +41,7 @@ interface NameState {
   missiles: number,
   ships: {name:string, damage: DamageType}[],
   page: page;
+  loading: boolean;
 }
 
 const stateDict = {
@@ -90,6 +92,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       missiles: 0,
       ships: [],
       page: page.INITIAL,
+      loading: false,
     };
 
     this.handleTextChange = this.handleTextChange.bind(this);
@@ -165,15 +168,19 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       case page.INITIAL:
         return(
           <TableContainer sx={{height:'100vh', width: '80%'}}>
-            <Button
+            <LoadingButton
             sx={{top:'40%', left:'40%'}}
               variant="contained"
               onClick={() => {
-                this.setState({page: page.RESULTS})
+                this.setState({loading: true})
+                setTimeout(() => this.setState({ page: page.RESULTS }), 7000);
               }}
+              endIcon={<PlayArrowIcon />}
+              loadingPosition="end"
+              loading={this.state.loading}
             >
               Simulate
-            </Button>
+            </LoadingButton>
           </TableContainer>
         );
       case page.RESULTS:
