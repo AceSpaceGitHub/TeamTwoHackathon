@@ -25,7 +25,8 @@ import { updatePlanAssessment } from "./sim-actions";
 import { DamageType } from "../types/damage-type";
 import { ActionsTaken } from "./actions-taken";
 import _, { initial } from "lodash";
-const sampleData = require('../test-data/getPlanAssessmentResponse.json');
+import { newPlanAssessment } from "../interfaces/new-store";
+
 
 enum page {
   INITIAL,
@@ -57,7 +58,7 @@ export interface StoreStateProps {
   /**
    * Current plan assessment.
    */
-  planAssessment: PlanAssessment | null;
+  //planAssessment: newPlanAssessment | null;
 
   
 }
@@ -71,10 +72,14 @@ export interface DispatchProps {
   updatePlanAssessment: (planAssessment: PlanAssessment) => void;
 }
 
+export interface TestProps{
+  planAssessment: newPlanAssessment | null;
+}
+
 /**
  * Component props.
  */
-export type NameFormProps = StoreStateProps & DispatchProps;
+export type NameFormProps = StoreStateProps & DispatchProps & TestProps;
 
 export class NameForm extends React.Component<NameFormProps, NameState> {
   constructor(props: NameFormProps) {
@@ -184,7 +189,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                 variant="outlined"
                 margin="normal"
                 type="string"
-                value={this.state.missiles}
+                value={this.props.planAssessment?.resultingState.missilesRemaining}
                 InputLabelProps={{ shrink: true }}
               />
               <TextField
@@ -194,7 +199,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                   variant="outlined"
                   margin="normal"
                   type="string"
-                  value={this.state.numJets}
+                  value={this.props.planAssessment?.resultingState.vehiclesRemaining}
                   InputLabelProps={{ shrink: true }}
                 />
               <TextField
@@ -204,22 +209,22 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                   variant="outlined"
                   margin="normal"
                   type="string"
-                  value={this.state.numPilots}
+                  value={this.props.planAssessment?.resultingState.peopleRemaining}
                   InputLabelProps={{ shrink: true }}
                 />
               <Table sx={{ }} aria-label="simple table">
                 <TableBody>
-                  {this.state.ships.map((row) => (
+                  {this.props.planAssessment?.resultingState.targetState.entries.map((target) => (
                     <TableRow
-                      key={row.name}
+                      key={target.id}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
-                      <TableCell>{row.name}</TableCell>
+                      <TableCell>{target.id}</TableCell>
                       <TableCell>
                         <FormControl sx={{float: 'right', maxWidth:'150px'}}>
                           <TextField
-                            value={stateDict[row.damage]}
-                            label={`${row.name} status`}
+                            value={target.chanceOfSuccess ?? 0}
+                            label={`Probability of success`}
                             id="demo-simple-select"
                           />
                         </FormControl>
@@ -230,7 +235,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
               </Table>
             </TableContainer>
             <TableContainer sx={{height: '100vh', display:'contents', overflowY:'scroll'}}>
-              <ActionsTaken planAssessment={sampleData as PlanAssessment}/>
+              <ActionsTaken planAssessment={this.props.planAssessment as newPlanAssessment}/>
             </TableContainer>
           </div>
         )
@@ -381,7 +386,7 @@ const mapStoreToProps = (state: {
 }): StoreStateProps => {
   return {
     operatingContext: state[SIM_REDUCER_KEY].operatingContext,
-    planAssessment:state[SIM_REDUCER_KEY].planAssessment,
+    //planAssessment:state[SIM_REDUCER_KEY].planAssessment,
   };
 };
 

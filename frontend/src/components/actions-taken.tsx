@@ -12,10 +12,12 @@ import React from "react";
 import { PlanAssessment } from "../interfaces/plan-assessment";
 import _ from 'lodash';
 import heloImage from '../helo.jpg';
+import sortieImage from '../jet.jpg'
+import { actionType, newPlanAssessment } from "../interfaces/new-store";
 
 export interface ActionsTakenProps{
 
-    planAssessment: PlanAssessment,
+    planAssessment: newPlanAssessment,
 }
 export interface ActionsTakenState{
 
@@ -27,22 +29,24 @@ const stateDict = {
     2: 'Destroyed'
 }
 
-const colorDict = {
-    0: 'PaleGreen',
-    1: 'Salmon',
-    2: 'FireBrick'
-}
-
 export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTakenState> {
   constructor(props: ActionsTakenProps) {
     super(props);
   }
 
-    getAttackString(array: any[]){
+    getArrayString(array: string[]){
         let string = '';
         array.forEach((entry) => {
-            string += (entry.targetId+' ');
+            string += (entry + ' ');
         })
+        return string;
+    }
+    getAttackString(jets: string[],missiles: number[]){
+        let string = '';
+        for(let i = 0; i < jets.length; i++){
+            string += `${jets[i]} equipped with ${missiles[i]} missiles, `
+            if(i === jets.length -2) string += 'and ';
+        }
         return string;
     }
 
@@ -51,7 +55,7 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
     let targets = [];
     let prevState : any;
     let newState: any;
-    for(let i = 0; i < this.props.planAssessment.sortieActions.length; i++){
+    /*for(let i = 0; i < this.props.planAssessment.sortieActions.length; i++){
         //rows = [];
         targets = [];
         newState = [];
@@ -72,21 +76,25 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
         })
        prevState = newState;
 
-    }
+    }*/
     
-    console.log(rows);
 
     return (
         <div style={{display:'-webkit-box', overflowX:'hidden'}}>
             <List>
-                {rows.map((row) => (
+                {this.props.planAssessment.resultingActions.map((action) => (
                 <Container sx={{height:'150px', marginLeft:'5%', marginBottom:'2%', marginRight:'5%', backgroundColor:'#353839', width:'auto'}}>
-                    <Container sx={{position: 'absolute', margin:'5px', width:'250px', height:'140px', backgroundImage:`url(${heloImage})`}}></Container>
+                    <Container sx={{position: 'absolute', margin:'5px', width:'250px', height:'140px', backgroundImage:`url(${action.type === actionType.Helo ? heloImage : sortieImage})`}}></Container>
                     <Container sx={{marginLeft:'260px', overflow:'normal', width:'auto'}}>
                         <div>
-                            <h3>Helo Launch</h3>
-                            <p>
-                                Helo 1 took off from Carrier 1 at 16:01:04 and returned at 16:31:06 to attack {this.getAttackString(row.attacks)}
+                            <p style={{fontSize:'18px'}}>
+                                <b>{action.type === actionType.Helo ? 'Helo Launch' : 'Sortie Launch'}</b><br></br>
+                            </p>
+                            <p style={{fontSize:'14px'}}>
+                                {action.type === actionType.Helo ? this.getArrayString(action.involvedVehicles) : this.getAttackString(action.involvedVehicles,action.numberOfMissiles)} took off from {action.departingCarrier}.<br></br>
+                                {action.type === actionType.Sortie ? `Targeted Ships : ${this.getArrayString(action.targetList)}`:''}<br></br>
+                                Time Departed: {action.startTime}<br></br>
+                                Time Returned: {action.endTime}
                             </p>
                         </div>
                     </Container>
