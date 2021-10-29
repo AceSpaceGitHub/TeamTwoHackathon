@@ -12,7 +12,6 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   TextField,
 } from "@mui/material";
@@ -170,7 +169,6 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
             sx={{top:'40%', left:'40%'}}
               variant="contained"
               onClick={() => {
-                alert(this.state.missiles + " missiles");
                 this.setState({page: page.RESULTS})
               }}
             >
@@ -263,7 +261,12 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     // }
 
     return (
-      <div style={{display:'block'}}>
+      <div style={{
+        backgroundImage: "url(../../img/image.jpg)",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "top",
+      }}>
         
 
         <TableContainer sx={{float:'left', width: '40vh', height:'fit-content'}} component={Paper}>
