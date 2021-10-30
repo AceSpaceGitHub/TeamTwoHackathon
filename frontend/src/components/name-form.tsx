@@ -239,7 +239,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                       <TableCell>
                         <FormControl sx={{float: 'right', maxWidth:'150px'}}>
                           <TextField
-                            value={target.chanceOfSuccess ?? 0}
+                            value={Math.round(target.chanceOfSuccess ?? 99)}
                             label={`Probability of success`}
                             id="demo-simple-select"
                           />
