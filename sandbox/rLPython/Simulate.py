@@ -279,25 +279,23 @@ def simulate(numberOfMissiles, numberOfJets, numberOfPilots, damage1, damage2, d
 
         solved = 0
         solvedArray = [0, 0, 0, 0, 0, 0]
-        for x in range(0, 1000):
-            observation = scenarioEnvironment.reset()
-            for sortie in sorties:
-                observation, _, done, _ = scenarioEnvironment.step(sortie[0])
-            
+        for y in range(0, 1000):
+            shipHits = sorties[-1][1][2]
             isExpectedDamageMet = True
             for shipIndex in range(0, 6):
                 damage = 0
-                for shot in range(0, observation["currentShipDamage"][shipIndex]):
+                for shot in range(0, shipHits[shipIndex]):
                     damage = shootShip(damage)
 
-                if damage < damageArray[shipIndex]:
+                if damage >= damageArray[shipIndex]:
                     solvedArray[shipIndex] += 1
+
+                if damage < damageArray[shipIndex]:
                     isExpectedDamageMet = False
-                    break
 
             if isExpectedDamageMet and observation["missiles"] >= 0 and observation["assets"][0] >=0 and observation["assets"][1] >= 0:
                 solved += 1
-        predictions.append([(solved/1000.0)*100, solvedArray, sorties])
+        predictions.append([(solved/1000.0)*100, [(solvedArray[0]/1000)*100, (solvedArray[1]/1000)*100, (solvedArray[2]/1000)*100, (solvedArray[3]/1000)*100, (solvedArray[4]/1000)*100, (solvedArray[5]/1000)*100], sorties])
 
     predictions.sort(reverse=True, key=lambda p: p[0])
     scenarioEnvironment.close()
