@@ -26,6 +26,7 @@ import { newPlanAssessment } from "../interfaces/new-store";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { TargetIdToDamage } from "../interfaces/target-damage-assessment";
+import sampleData from '../test-data/sample-data.json';
 
 
 enum page {
@@ -153,6 +154,8 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
         //this.props.updatePlanAssessment(planAssessment);
       })
       .catch((error) => {
+        const planAssessment = sampleData as newPlanAssessment;
+        this.setState({ planAssessment:planAssessment, page: page.RESULTS, loading:false })
         alert("Issue with calling server:" + error);
       });
   }
@@ -259,14 +262,6 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
   }
 
   render() {
-
-    //Plug this missilesNum array into
-    //line `{ships.map((row) => (` to dynamically update table rows
-    const missilesNum: string[] = [];
-    for (let k = 0; k < Number(this.state.missiles); k++) {
-      var displayVal = k + 1;
-      missilesNum[k] = "Ship " + displayVal;
-    }
 
     return (
       <div style={{

@@ -35,15 +35,16 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
 
     getArrayString(array: string[]){
         let string = '';
-        array.forEach((entry) => {
-            string += (entry + ' ');
-        })
+        for(let i = 0; i < array.length; i++){
+            string += (array[i] + ' ');
+            if(i === array.length -2) string += 'and ';
+        }
         return string;
     }
     getAttackString(jets: string[],missiles: number[]){
         let string = '';
         for(let i = 0; i < jets.length; i++){
-            string += `${jets[i]} equipped with ${missiles[i]} missiles, `
+            string += `${jets[i]} equipped with ${missiles[i]} ${missiles[i] === 1 ? 'missile' : 'missiles'}, `
             if(i === jets.length -2) string += 'and ';
         }
         return string;
