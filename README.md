@@ -10,9 +10,6 @@ This assumes you have Python 3.8 installed on your machine.
 cd Backend/agent-server
 
 # Only need to do this in the beginning/when dependencies change.
-# If ortools claims it can't be resolved when you run scripts,
-# may need to install some VS C++ Redistributable and restart your computer before this,
-# https://docs.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist?view=msvc-160.
 python -m pip install -r requirements.txt
 
 # To run the server - it will come up on localhost:50051
