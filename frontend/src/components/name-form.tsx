@@ -195,10 +195,10 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       case page.RESULTS:
         if(!this.state.planAssessment) return (<></>);
         return(
-          <div style={{display:'flex', overflowX:'hidden'}}>
-            <TableContainer sx={{ width: '40vh', height:'fit-content'}} component={Paper}>
+          <div style={{ paddingLeft:'10px', display:'flex', overflowX:'hidden'}}>
+            <TableContainer sx={{ width: '48vh', height:'fit-content'}} component={Paper}>
               <TextField
-                sx={{marginLeft:'10%'}}
+                fullWidth
                 id="outlined-basic"
                 label="Number of missiles remaining:"
                 variant="outlined"
@@ -208,7 +208,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                 InputLabelProps={{ shrink: true }}
               />
               <TextField
-                  sx={{marginLeft:'10%'}}
+                  fullWidth
                   id="outlined-basic"
                   label="Number of jets remaining:"
                   variant="outlined"
@@ -218,7 +218,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                   InputLabelProps={{ shrink: true }}
                 />
               <TextField
-                  sx={{marginLeft:'10%'}}
+                  fullWidth
                   id="outlined-basic"
                   label="Number of pilots survived:"
                   variant="outlined"
@@ -274,7 +274,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
 
         <TableContainer sx={{float:'left', width: '40vh', height:'fit-content'}} component={Paper}>
           <TextField
-            sx={{marginLeft:'10%'}}
+            fullWidth
             id="outlined-basic"
             label="Number of missiles:"
             variant="outlined"
@@ -285,7 +285,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
             onChange={this.handleTextChange}
           />
           <TextField
-              sx={{marginLeft:'10%'}}
+              fullWidth
               id="outlined-basic"
               label="Number of jets:"
               variant="outlined"
@@ -298,7 +298,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
               }}
             />
           <TextField
-              sx={{marginLeft:'10%'}}
+              fullWidth
               id="outlined-basic"
               label="Number of pilots:"
               variant="outlined"
