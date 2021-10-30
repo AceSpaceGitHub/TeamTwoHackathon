@@ -34,7 +34,7 @@ enum page {
   RESULTS
 }
 
-const shipNames = ['Enemy Carrier A', 'Enemy Carrier B', 'Enemy Destoyer A', 'Eneemy Destroyer B', 'Enemy Cruiser A', 'Enemy Cruiser B'];
+const shipNames = ['Enemy Carrier A', 'Enemy Carrier B', 'Enemy Destoyer A', 'Enemy Destroyer B', 'Enemy Cruiser A', 'Enemy Cruiser B'];
 
 interface NameState {
   numShips: number,
