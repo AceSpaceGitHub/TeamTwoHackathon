@@ -4,9 +4,9 @@ from stable_baselines3 import PPO
 import json
 
 import agent_data_converter
-import agent_model_driver
 import assignment_gene_algo_driver
 import scheduling_gene_algo_driver
+import simulate
 
 app = Flask(__name__)
 CORS(app)
@@ -26,24 +26,30 @@ def get_plan_assessment():
        # or something before this.
        operatingContext = json.loads(operatingContext)
 
-    scenarioEnv = agent_data_converter.OperatingContextToScenarioEnvironment(operatingContext)
+    numJets, numPilots, numMissiles, desiredDamages = (
+       agent_data_converter.GetScenarioEnvironmentInputs(operatingContext)
+    )
 
-    prediction = agent_model_driver.GeneratePrediction(model, scenarioEnv)
+    prediction = simulate.simulate(model, numMissiles, numJets, numPilots,
+       desiredDamages[0], desiredDamages[1], desiredDamages[2],
+       desiredDamages[3], desiredDamages[4], desiredDamages[5]
+    )
     
     targetIds = []
     for entry in operatingContext['intendedTargetIdToDamage']['entries']:
        targetIds.append(entry['id'])
-    planAssessment = agent_data_converter.PredictionToPlanAssessment(prediction, targetIds)
+    planAssessment = agent_data_converter.GeneratePlanAssessment(prediction, targetIds)
 
-    sortieToMissileRequest = agent_data_converter.PlanAssessmentToSortieMissileRequest(planAssessment)
+    sortieToMissileRequest = agent_data_converter.GenerateSortieMissileRequest(planAssessment)
     strikePackages = assignment_gene_algo_driver.allocateStrikePackages(50, 100, sortieToMissileRequest, .99, .12)
 
-    sortieToTargetIds, sortieToLengthHours = agent_data_converter.PlanAssessmentToRequestedSchedule(planAssessment)
+    sortieToTargetIds, sortieToLengthHours = agent_data_converter.GenerateScheduleRequest(planAssessment)
     strikeSchedule = scheduling_gene_algo_driver.scheduleStrikePackages(50, 100, 7 * 24, sortieToLengthHours)
 
     assembledSortiesActions = agent_data_converter.AssembleSortieData(
        planAssessment, strikePackages, strikeSchedule,
        sortieToTargetIds, sortieToLengthHours, sortieToMissileRequest)
     return {
-       'resultingActions': assembledSortiesActions
+       'resultingActions': assembledSortiesActions,
+       'resultingState': planAssessment['resultingState']
     }

@@ -18,7 +18,6 @@ import {
 import { OperatingContext } from "../interfaces/operating-context";
 import { SimStoreState } from "../interfaces/sim-store-state";
 import { SIM_REDUCER_KEY } from "./sim-reducers";
-import { PlanAssessment } from "../interfaces/plan-assessment";
 import { updatePlanAssessment } from "./sim-actions";
 import { DamageType } from "../types/damage-type";
 import { ActionsTaken } from "./actions-taken";
@@ -26,6 +25,8 @@ import _, { initial } from "lodash";
 import { newPlanAssessment } from "../interfaces/new-store";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { TargetIdToDamage } from "../interfaces/target-damage-assessment";
+import sampleData from '../test-data/sample-data.json';
 
 
 enum page {
@@ -33,6 +34,8 @@ enum page {
   SIMULATING,
   RESULTS
 }
+
+const shipNames = ['Enemy Carrier A', 'Enemy Carrier B', 'Enemy Destroyer A', 'Enemy Destroyer B', 'Enemy Cruiser A', 'Enemy Cruiser B'];
 
 interface NameState {
   numShips: number,
@@ -42,6 +45,7 @@ interface NameState {
   ships: {name:string, damage: DamageType}[],
   page: page;
   loading: boolean;
+  planAssessment: newPlanAssessment | null;
 }
 
 const stateDict = {
@@ -70,17 +74,14 @@ export interface DispatchProps {
    *
    * @param {PlanAssessment} planAssessment Plan assessment.
    */
-  updatePlanAssessment: (planAssessment: PlanAssessment) => void;
+  updatePlanAssessment: (planAssessment: newPlanAssessment) => void;
 }
 
-export interface TestProps{
-  planAssessment: newPlanAssessment | null;
-}
 
 /**
  * Component props.
  */
-export type NameFormProps = StoreStateProps & DispatchProps & TestProps;
+export type NameFormProps = StoreStateProps & DispatchProps;
 
 export class NameForm extends React.Component<NameFormProps, NameState> {
   constructor(props: NameFormProps) {
@@ -93,6 +94,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
       ships: [],
       page: page.INITIAL,
       loading: false,
+      planAssessment: null,
     };
 
     this.handleTextChange = this.handleTextChange.bind(this);
@@ -110,7 +112,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     if(this.state.numShips !== this.state.ships.length){
       let newShips = this.state.ships;
       for(let i = 0; i < this.state.numShips; i++){
-        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: DamageType.Unharmed};
+        newShips[i] = this.state.ships[i] ?? {name:shipNames[i], damage: DamageType.Unharmed};
       }
       newShips = newShips.slice(0,this.state.numShips);
       this.setState({ships: newShips});
@@ -121,7 +123,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     if(this.state.numShips !== this.state.ships.length){
       let newShips = this.state.ships;
       for(let i = 0; i < this.state.numShips; i++){
-        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: DamageType.Unharmed};
+        newShips[i] = this.state.ships[i] ?? {name:shipNames[i], damage: DamageType.Unharmed};
       }
       newShips = newShips.slice(0,this.state.numShips);
     }
@@ -147,21 +149,16 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     })
       .then((res) => res.json())
       .then((data) => {
-        const planAssessment = data as PlanAssessment;
-        this.props.updatePlanAssessment(planAssessment);
+        const planAssessment = data as newPlanAssessment;
+        this.setState({ planAssessment:planAssessment, page: page.RESULTS, loading:false })
+        //this.props.updatePlanAssessment(planAssessment);
       })
       .catch((error) => {
+        //const planAssessment = sampleData as newPlanAssessment;
+        //this.setState({ planAssessment:planAssessment, page: page.RESULTS, loading:false })
         alert("Issue with calling server:" + error);
       });
   }
-
-  /*updateDamages(primaryShip: string, defendingShip: string, newValue: number): void{
-    const firstIndex = +primaryShip[primaryShip.length-1] - 1;
-    const secondIndex = +defendingShip[defendingShip.length-1] - 1;
-    let newDefenses = this.state.defenses;
-    newDefenses[firstIndex][secondIndex] = newValue;
-    this.setState({defenses:_.cloneDeep(newDefenses)});
-  }*/
 
   getMainPage(){
     switch(this.state.page){
@@ -172,8 +169,20 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
             sx={{top:'40%', left:'40%'}}
               variant="contained"
               onClick={() => {
-                this.setState({loading: true})
-                setTimeout(() => this.setState({ page: page.RESULTS }), 7000);
+                let input : OperatingContext;
+                this.setState({loading: true});
+                let targetList : TargetIdToDamage = {entries:[]};
+                this.state.ships.forEach((ship) => {
+                  targetList.entries.push({id: ship.name, damage:ship.damage});
+                })
+                input = {
+                  numJets: this.state.numJets,
+                  numPilots: this.state.numPilots,
+                  numMissiles: this.state.missiles,
+                  intendedTargetIdToDamage:targetList,
+                }
+                this.generatePlanAssessment(input);
+                //setTimeout(() => this.setState({ page: page.RESULTS }), 7000);
               }}
               endIcon={<PlayArrowIcon />}
               loadingPosition="end"
@@ -184,42 +193,43 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
           </TableContainer>
         );
       case page.RESULTS:
+        if(!this.state.planAssessment) return (<></>);
         return(
-          <div style={{display:'flex', overflowX:'hidden'}}>
-            <TableContainer sx={{ width: '40vh', height:'fit-content'}} component={Paper}>
+          <div style={{ paddingLeft:'10px', display:'flex', overflowX:'hidden'}}>
+            <TableContainer sx={{ width: '48vh', height:'fit-content'}} component={Paper}>
               <TextField
-                sx={{marginLeft:'10%'}}
+                fullWidth
                 id="outlined-basic"
                 label="Number of missiles remaining:"
                 variant="outlined"
                 margin="normal"
                 type="string"
-                value={this.props.planAssessment?.resultingState.missilesRemaining}
+                value={this.state.planAssessment?.resultingState.missilesRemaining}
                 InputLabelProps={{ shrink: true }}
               />
               <TextField
-                  sx={{marginLeft:'10%'}}
+                  fullWidth
                   id="outlined-basic"
                   label="Number of jets remaining:"
                   variant="outlined"
                   margin="normal"
                   type="string"
-                  value={this.props.planAssessment?.resultingState.vehiclesRemaining}
+                  value={this.state.planAssessment?.resultingState.vehiclesRemaining}
                   InputLabelProps={{ shrink: true }}
                 />
               <TextField
-                  sx={{marginLeft:'10%'}}
+                  fullWidth
                   id="outlined-basic"
                   label="Number of pilots survived:"
                   variant="outlined"
                   margin="normal"
                   type="string"
-                  value={this.props.planAssessment?.resultingState.peopleRemaining}
+                  value={this.state.planAssessment?.resultingState.peopleRemaining}
                   InputLabelProps={{ shrink: true }}
                 />
               <Table sx={{ }} aria-label="simple table">
                 <TableBody>
-                  {this.props.planAssessment?.resultingState.targetState.entries.map((target) => (
+                  {this.state.planAssessment?.resultingState.targetState.entries.map((target) => (
                     <TableRow
                       key={target.id}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -240,7 +250,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
               </Table>
             </TableContainer>
             <TableContainer sx={{height: '100vh', display:'contents', overflowY:'scroll'}}>
-              <ActionsTaken planAssessment={this.props.planAssessment as newPlanAssessment}/>
+              <ActionsTaken planAssessment={this.state.planAssessment as newPlanAssessment}/>
             </TableContainer>
           </div>
         )
@@ -253,20 +263,6 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
 
   render() {
 
-    //Plug this missilesNum array into
-    //line `{ships.map((row) => (` to dynamically update table rows
-    const missilesNum: string[] = [];
-    for (let k = 0; k < Number(this.state.missiles); k++) {
-      var displayVal = k + 1;
-      missilesNum[k] = "Ship " + displayVal;
-    }
-    // console.log(sampleData)
-    // if(sampleData){
-    //   return(
-    //     <ActionsTaken planAssessment={sampleData as PlanAssessment}/>
-    //   )
-    // }
-
     return (
       <div style={{
         backgroundImage: "url(../../img/image.jpg)",
@@ -278,7 +274,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
 
         <TableContainer sx={{float:'left', width: '40vh', height:'fit-content'}} component={Paper}>
           <TextField
-            sx={{marginLeft:'10%'}}
+            fullWidth
             id="outlined-basic"
             label="Number of missiles:"
             variant="outlined"
@@ -289,7 +285,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
             onChange={this.handleTextChange}
           />
           <TextField
-              sx={{marginLeft:'10%'}}
+              fullWidth
               id="outlined-basic"
               label="Number of jets:"
               variant="outlined"
@@ -302,7 +298,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
               }}
             />
           <TextField
-              sx={{marginLeft:'10%'}}
+              fullWidth
               id="outlined-basic"
               label="Number of pilots:"
               variant="outlined"
@@ -350,35 +346,6 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
             </TableBody>
           </Table>
         </TableContainer>
-        {/*<TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableBody>
-              {this.state.ships.map((row) => (
-                <TableRow
-                  key={row.name}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row" sx={{minWidth:'120px'}}>
-                    {row.name}
-                  </TableCell>
-                  {this.state.ships.map((element) => (
-                      <TableCell>
-                        <TextField
-                          label={`${element.name} chance to defend ${row.name}`}
-                          variant="outlined"
-                          type="number"
-                          InputLabelProps={{ shrink: true }}
-                          onChange={(value) => {
-                            this.updateDamages(row.name, element.name, +value.target.value);
-                          }}
-                        />
-                      </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>*/}
         {this.getMainPage()}
       </div>
     );
@@ -408,7 +375,7 @@ const mapStoreToProps = (state: {
  */
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
   return {
-    updatePlanAssessment: (planAssessment: PlanAssessment): void =>
+    updatePlanAssessment: (planAssessment: newPlanAssessment): void =>
       dispatch(updatePlanAssessment(planAssessment)),
   };
 };

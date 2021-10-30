@@ -9,7 +9,6 @@ import {
     TableRow,
   } from "@mui/material";
 import React from "react";
-import { PlanAssessment } from "../interfaces/plan-assessment";
 import _ from 'lodash';
 import heloImage from '../helo.jpg';
 import sortieImage from '../jet.jpg'
@@ -36,16 +35,26 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
 
     getArrayString(array: string[]){
         let string = '';
-        array.forEach((entry) => {
-            string += (entry + ' ');
-        })
+        for(let i = 0; i < array.length; i++){
+            string += (array[i] + ' ');
+            if(i === array.length -2) string += 'and ';
+        }
         return string;
     }
-    getAttackString(jets: string[],missiles: number[]){
+    getAttackString(jets: string[],missiles: number[], personnel:string[]){
         let string = '';
         for(let i = 0; i < jets.length; i++){
-            string += `${jets[i]} equipped with ${missiles[i]} missiles, `
+            string += `${jets[i]} piloted by ${personnel[i]}, equipped with ${missiles[i]} ${missiles[i] === 1 ? 'missile' : 'missiles'}, `
             if(i === jets.length -2) string += 'and ';
+        }
+        return string;
+    }
+
+    getHeloString(helos: string[],personnel:string[]){
+        let string = '';
+        for(let i = 0; i < helos.length; i++){
+            string += `${helos[i]} piloted by ${personnel[i]}, `
+            if(i === helos.length -2) string += 'and ';
         }
         return string;
     }
@@ -91,7 +100,7 @@ export class ActionsTaken extends React.Component<ActionsTakenProps, ActionsTake
                                 <b>{action.type === actionType.Helo ? 'Helo Launch' : 'Sortie Launch'}</b><br></br>
                             </p>
                             <p style={{fontSize:'14px'}}>
-                                {action.type === actionType.Helo ? this.getArrayString(action.involvedVehicles) : this.getAttackString(action.involvedVehicles,action.numberOfMissiles)} took off from {action.departingCarrier}.<br></br>
+                                {action.type === actionType.Helo ? this.getHeloString(action.involvedVehicles, action.involvedPersonelle) : this.getAttackString(action.involvedVehicles,action.numberOfMissiles, action.involvedPersonelle)} took off from {action.departingCarrier}.<br></br>
                                 {action.type === actionType.Sortie ? `Targeted Ships : ${this.getArrayString(action.targetList)}`:''}<br></br>
                                 Time Departed: {action.startTime}<br></br>
                                 Time Returned: {action.endTime}

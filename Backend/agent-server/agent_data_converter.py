@@ -2,9 +2,8 @@ import datetime
 from stable_baselines3.common.env_checker import check_env
 
 from gene_constraints import *
-from scenario_env import ScenarioEnv
 
-def OperatingContextToScenarioEnvironment(operatingContext):
+def GetScenarioEnvironmentInputs(operatingContext):
     """
     Converts operating context (aka JSON dictionary) from client
     to scenario environment agent can understand.
@@ -17,61 +16,64 @@ def OperatingContextToScenarioEnvironment(operatingContext):
     desiredDamages = []
     for entry in operatingContext['intendedTargetIdToDamage']['entries']:
         desiredDamages.append(entry['damage'])
-    
-    scenarioEnv = ScenarioEnv(numMissiles,
-        desiredDamages[0], desiredDamages[1], desiredDamages[2],
-        desiredDamages[3], desiredDamages[4], desiredDamages[5])
-    check_env(scenarioEnv, warn=True)
 
-    return scenarioEnv
+    return numJets, numPilots, numMissiles, desiredDamages
 
-def PredictionToPlanAssessment(prediction, targetIds):
+def GeneratePlanAssessment(prediction, targetIds):
     """
     Converts prediction results to plan assessment client expects.
     """
     sortieActions = []
-    resultingStates = []
-    for step in prediction:
-        actionTaken = step[0]
-        actionMidIdx = len(actionTaken) // 2
+    numJets = 0
+    numPilots = 0
+    numMissiles = 0
 
-        targettedIds = []
-        for i in range(0, actionMidIdx):
-            targettedIds.append(targetIds[actionTaken[i]])
+    results = prediction['Results']
+    for result in results:
+        # Translate the per-sortie action data.
+        for action in result['Actions']:
+            actionTaken = action['Actions']
+            actionMidIdx = len(actionTaken) // 2
 
-        missileLoadouts = []
-        for i in range(actionMidIdx, len(actionTaken)):
-            missileLoadouts.append(str(actionTaken[i]))
+            targettedIds = []
+            for i in range(0, actionMidIdx):
+                targettedIds.append(targetIds[actionTaken[i]])
 
-        sortieActions.append({
-            'targetIds': targettedIds,
-            'missileLoadouts': missileLoadouts
-        })
+            missileLoadouts = []
+            for i in range(actionMidIdx, len(actionTaken)):
+                missileLoadouts.append(str(actionTaken[i]))
 
-        stateContents = step[1]
-        numMissiles = stateContents[0]
+            sortieActions.append({
+                'targetIds': targettedIds,
+                'missileLoadouts': missileLoadouts
+            })
 
-        targetIdToDamage = {}
-        targetIdxToDamage = stateContents[1]
-        for targetIdx in range(0, len(targetIdxToDamage)):
-            targetIdToDamage[targetIds[targetIdx]] = str(targetIdxToDamage[targetIdx])
+            assets = action['Assets']
+            numJets = assets[0]
+            numPilots = assets[1]
 
-        numJets = stateContents[2][0]
-        numPilots = stateContents[2][1]
+            numMissiles = action['Missiles']
 
-        resultingStates.append({
-            'numMissiles': str(numMissiles),
-            'numJets': str(numJets),
-            'numPilots': str(numPilots),
-            'targetIdToDamage': targetIdToDamage
-        })
+        # Translate the per-target state data.
+        targetStateEntries = []
+        targetRates = result['TargetRates']
+        for targetRateIdx in range(len(targetRates)):
+            targetStateEntries.append({
+                'id': targetIds[targetRateIdx],
+                'chanceOfSuccess': targetRates[targetRateIdx]
+            })
 
     return {
         'sortieActions': sortieActions,
-        'resultingStates': resultingStates
+        'resultingState': {
+            'vehiclesRemaining': numJets,
+            'peopleRemaining': numPilots,
+            'missilesRemaining': numMissiles,
+            'targetState': { 'entries': targetStateEntries }
+        }
     }
 
-def PlanAssessmentToSortieMissileRequest(planAssessment):
+def GenerateSortieMissileRequest(planAssessment):
     sortieMissileRequest = {}
     sortieActions = planAssessment['sortieActions']
     for i in range(len(sortieActions)):
@@ -81,7 +83,7 @@ def PlanAssessmentToSortieMissileRequest(planAssessment):
             sortieMissileRequest[i].append(int(missileLoadouts[j]))
     return sortieMissileRequest
 
-def PlanAssessmentToRequestedSchedule(planAssessment):
+def GenerateScheduleRequest(planAssessment):
     sortieToTargetIds = {}
     sortieToLengthHours = {}
     sortieActions = planAssessment['sortieActions']

@@ -1,3 +1,4 @@
 flask
 flask-cors
-ortools
+gym
+stable_baselines3[extras]

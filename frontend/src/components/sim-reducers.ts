@@ -7,6 +7,7 @@ import { BaseActionPayload, UpdateOperatingContextPayload, UpdatePlanAssessmentP
 // Would like test-data to be in common area outside frontend/backend,
 // but React app doesn't allow imports outside its src area.
 import cannedOperatingContext from '../test-data/getPlanAssessmentRequest.json';
+import cannedPayload from '../test-data/sample-data.json';
 
 /**
  * Sim reducer key.
@@ -17,7 +18,7 @@ export const SIM_REDUCER_KEY = "SimReducer";
  * Initial store state.
  */
 export const initialSimStoreState: SimStoreState = {
-    planAssessment: null,
+    planAssessment: cannedPayload,
     operatingContext: cannedOperatingContext,
 };
 

@@ -11,7 +11,6 @@ numCarriers = 2
 numJets = 19
 numHeloCrews = 2
 numPilots = 21
-numMissiles = 13
 
 minJetsPerSortie = 2
 maxMissilesPerJet = 2
