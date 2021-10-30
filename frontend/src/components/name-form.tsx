@@ -34,6 +34,8 @@ enum page {
   RESULTS
 }
 
+const shipNames = ['Enemy Carrier A', 'Enemy Carrier B', 'Enemy Destoyer A', 'Eneemy Destroyer B', 'Enemy Cruiser A', 'Enemy Cruiser B'];
+
 interface NameState {
   numShips: number,
   numJets: number,
@@ -109,7 +111,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     if(this.state.numShips !== this.state.ships.length){
       let newShips = this.state.ships;
       for(let i = 0; i < this.state.numShips; i++){
-        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: DamageType.Unharmed};
+        newShips[i] = this.state.ships[i] ?? {name:shipNames[i], damage: DamageType.Unharmed};
       }
       newShips = newShips.slice(0,this.state.numShips);
       this.setState({ships: newShips});
@@ -120,7 +122,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     if(this.state.numShips !== this.state.ships.length){
       let newShips = this.state.ships;
       for(let i = 0; i < this.state.numShips; i++){
-        newShips[i] = this.state.ships[i] ?? {name:`Ship ${i+1}`, damage: DamageType.Unharmed};
+        newShips[i] = this.state.ships[i] ?? {name:shipNames[i], damage: DamageType.Unharmed};
       }
       newShips = newShips.slice(0,this.state.numShips);
     }
