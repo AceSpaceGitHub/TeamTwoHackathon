@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 
 import {
   FormControl,
+  Button,
   InputLabel,
   MenuItem,
   Paper,
@@ -88,9 +89,9 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     super(props);
     this.state = {
       numShips:6,
-      numJets:0,
-      numPilots:0,
-      missiles: 0,
+      numJets:19,
+      numPilots:21,
+      missiles: 16,
       ships: [],
       page: page.INITIAL,
       loading: false,
@@ -166,7 +167,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
         return(
           <TableContainer sx={{height:'100vh', width: '80%'}}>
             <LoadingButton
-            sx={{top:'40%', left:'40%'}}
+              sx={{top:'40%', left:'40%'}}
               variant="contained"
               onClick={() => {
                 let input : OperatingContext;
@@ -248,6 +249,12 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                   ))}
                 </TableBody>
               </Table>
+              <Button
+              style={{color:'white', float:'right'}}
+              onClick={()=>{
+                this.setState({planAssessment: null,page: page.INITIAL});
+              }}
+              >Reset</Button>
             </TableContainer>
             <TableContainer sx={{height: '100vh', display:'contents', overflowY:'scroll'}}>
               <ActionsTaken planAssessment={this.state.planAssessment as newPlanAssessment}/>
@@ -271,7 +278,6 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
         backgroundPosition: "top",
       }}>
         
-
         <TableContainer sx={{float:'left', width: '40vh', height:'fit-content'}} component={Paper}>
           <TextField
             fullWidth
@@ -335,9 +341,9 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
                         }}
                         id="demo-simple-select"
                       >
-                        <MenuItem value={DamageType.Unharmed}>Unharmed</MenuItem>
-                        <MenuItem value={DamageType.Disabled}>Disabled</MenuItem>
-                        <MenuItem value={DamageType.Destroyed}>Destroyed</MenuItem>
+                        <MenuItem sx={{float:'none'}} value={DamageType.Unharmed}>Unharmed</MenuItem>
+                        <MenuItem sx={{float:'none'}} value={DamageType.Disabled}>Disabled</MenuItem>
+                        <MenuItem sx={{float:'none'}}value={DamageType.Destroyed}>Destroyed</MenuItem>
                       </Select>
                     </FormControl>
                   </TableCell>
