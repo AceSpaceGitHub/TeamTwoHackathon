@@ -96,20 +96,12 @@ def GenerateScheduleRequest(planAssessment):
         sortieToLengthHours[i] = max(targetSortieTimes)
     return sortieToTargetIds, sortieToLengthHours
 
-def CreateHeloAction(strikePackage, actionStartTimestamp):
-    # Form the helo action.
-    # At the moment, intelligent helo assignment isn't done
-    # based off what/where the strike package is,
-    # so just take the helos from the same carrier as one of the jets.
-    jetIdx1 = strikePackage[0]
-    carrierId = None
-    heloIds = None
-    heloCrewIds = None
-    if isJetOnCarrier[0][jetIdx1] == 1:
+def CreateHeloAction(carrierIdx, actionStartTimestamp, heloReturnPadHours):
+    if carrierIdx == 0:
         carrierId = "Carrier A"
         heloIds = ["Helo 1", "Helo 2"]
         heloCrewIds = ["Helo Crew 1", "Helo Crew 2"]
-    elif isJetOnCarrier[1][jetIdx1] == 1:
+    elif carrierIdx == 1:
         carrierId = "Carrier B"
         heloIds = ["Helo 3", "Helo 4"]
         heloCrewIds = ["Helo Crew 3", "Helo Crew 4"]
@@ -122,11 +114,11 @@ def CreateHeloAction(strikePackage, actionStartTimestamp):
         "involvedPersonelle": heloCrewIds,
         "numberOfMissiles": [],
         "startTime": actionStartTimestamp.strftime("%H:%M:%S"),
-        "endTime": (actionStartTimestamp + datetime.timedelta(hours=heloTimePadHours)).strftime("%H:%M:%S")
+        "endTime": (actionStartTimestamp + datetime.timedelta(hours=heloReturnPadHours)).strftime("%H:%M:%S")
     }
 
 def CreateStrikeAction(strikePackage, strikeLoadout, strikeTargetIds,
-    strikeLengthHours, actionStartTimestamp):
+    strikeOffsetHours, strikeLengthHours, actionStartTimestamp):
     # At the moment we're assuming all jets/pilots present,
     # so there's not a real index -> actual id/name lookup here.
     jetIdx1 = strikePackage[0]
@@ -148,7 +140,7 @@ def CreateStrikeAction(strikePackage, strikeLoadout, strikeTargetIds,
         "departingCarrier": carrierId,
         "involvedPersonelle": [pilotId1, pilotId2],
         "numberOfMissiles": strikeLoadout,
-        "startTime": actionStartTimestamp.strftime("%H:%M:%S"),
+        "startTime": (actionStartTimestamp + datetime.timedelta(hours=strikeOffsetHours)).strftime("%H:%M:%S"),
         "endTime": (actionStartTimestamp + datetime.timedelta(hours=strikeLengthHours)).strftime("%H:%M:%S")
     }
 
@@ -169,22 +161,24 @@ def AssembleSortieData(planAssessment, strikePackages, strikeSchedule,
         raise 'Strike package and schedule sizes do not match.'
 
     resultingActions = []
+
+    # Assume helos for both carriers are deployed at the start for now.
+    heloReturnPadHours = 8
+    missionStartTimestamp = (datetime.datetime.strptime(missionStartTime, '%H:%M:%S'))
+
+    firstHeloAction = CreateHeloAction(0, missionStartTimestamp, heloReturnPadHours)
+    resultingActions.append(firstHeloAction)
+
+    secondHeloAction = CreateHeloAction(1, missionStartTimestamp, heloReturnPadHours)
+    resultingActions.append(secondHeloAction)
+
     for i in range(numStrikePackages):
         strikePackage = strikePackageTuples[i]
         strikeSchedule = strikeScheduleTuples[i]
 
-        sortieStartTime = (datetime.datetime.strptime(missionStartTime, '%H:%M:%S')
-            + datetime.timedelta(hours=strikeToLengthHours[i]))
-        firstHeloAction = CreateHeloAction(strikePackage, sortieStartTime)
-        resultingActions.append(firstHeloAction)
-
-        sortieStartTime = (datetime.datetime.strptime(firstHeloAction['endTime'], '%H:%M:%S'))
+        sortieStartTime = (datetime.datetime.strptime(firstHeloAction['startTime'], '%H:%M:%S'))
         strikeAction = CreateStrikeAction(strikePackage, strikeLoadouts[i],
-            strikesToTargetIds[i], strikeToLengthHours[i], sortieStartTime)
+            strikesToTargetIds[i], heloTimePadHours, strikeToLengthHours[i], sortieStartTime)
         resultingActions.append(strikeAction)
-
-        sortieStartTime = (datetime.datetime.strptime(strikeAction['endTime'], '%H:%M:%S'))
-        secondHeloAction = CreateHeloAction(strikePackage, sortieStartTime)
-        resultingActions.append(secondHeloAction)
 
     return resultingActions
