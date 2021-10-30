@@ -12,7 +12,7 @@ cd Backend/agent-server
 # Only need to do this in the beginning/when dependencies change.
 python -m pip install -r requirements.txt
 
-# To run the server - it will come up on localhost:50051
+# To run the server - it will come up on localhost:5000
 $env:FLASK_APP = "agent_server.py"
 python -m flask run
 ```
