@@ -9,7 +9,6 @@ import {
     TableRow,
   } from "@mui/material";
 import React from "react";
-import { PlanAssessment } from "../interfaces/plan-assessment";
 import _ from 'lodash';
 import heloImage from '../helo.jpg';
 import sortieImage from '../jet.jpg'

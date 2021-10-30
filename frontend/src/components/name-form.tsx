@@ -18,7 +18,6 @@ import {
 import { OperatingContext } from "../interfaces/operating-context";
 import { SimStoreState } from "../interfaces/sim-store-state";
 import { SIM_REDUCER_KEY } from "./sim-reducers";
-import { PlanAssessment } from "../interfaces/plan-assessment";
 import { updatePlanAssessment } from "./sim-actions";
 import { DamageType } from "../types/damage-type";
 import { ActionsTaken } from "./actions-taken";
@@ -70,7 +69,7 @@ export interface DispatchProps {
    *
    * @param {PlanAssessment} planAssessment Plan assessment.
    */
-  updatePlanAssessment: (planAssessment: PlanAssessment) => void;
+  updatePlanAssessment: (planAssessment: newPlanAssessment) => void;
 }
 
 export interface TestProps{
@@ -147,7 +146,7 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
     })
       .then((res) => res.json())
       .then((data) => {
-        const planAssessment = data as PlanAssessment;
+        const planAssessment = data as newPlanAssessment;
         this.props.updatePlanAssessment(planAssessment);
       })
       .catch((error) => {
@@ -408,7 +407,7 @@ const mapStoreToProps = (state: {
  */
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
   return {
-    updatePlanAssessment: (planAssessment: PlanAssessment): void =>
+    updatePlanAssessment: (planAssessment: newPlanAssessment): void =>
       dispatch(updatePlanAssessment(planAssessment)),
   };
 };

@@ -1,6 +1,7 @@
 import { Dispatch } from "redux";
+import { newPlanAssessment } from "../interfaces/new-store";
 import { OperatingContext } from "../interfaces/operating-context";
-import { PlanAssessment } from "../interfaces/plan-assessment";
+//import { PlanAssessment } from "../interfaces/plan-assessment";
 
 /**
  * Base payload type.
@@ -24,7 +25,7 @@ export interface UpdatePlanAssessmentPayload extends BaseActionPayload {
     /**
      * Data to update with.
      */
-    planAssessment: PlanAssessment;
+    planAssessment: newPlanAssessment;
 }
 
 /**
@@ -33,7 +34,7 @@ export interface UpdatePlanAssessmentPayload extends BaseActionPayload {
  * @param {PlanAssessment} planAssessment Plan assessment.
  * @returns {UpdatePlanAssessmentPayload} Payload.
  */
-export const updatePlanAssessmentAction = (planAssessment: PlanAssessment): UpdatePlanAssessmentPayload => ({
+export const updatePlanAssessmentAction = (planAssessment: newPlanAssessment): UpdatePlanAssessmentPayload => ({
     type: UPDATE_PLAN_ASSESSMENT,
     planAssessment,
 });
@@ -44,7 +45,7 @@ export const updatePlanAssessmentAction = (planAssessment: PlanAssessment): Upda
  * @param {PlanAssessment} planAssessment Plan assessment.
  * @returns {UpdatePlanAssessmentPayload} Payload.
  */
-export const updatePlanAssessment = (planAssessment: PlanAssessment):
+export const updatePlanAssessment = (planAssessment: newPlanAssessment):
     ((dispatch: Dispatch<UpdatePlanAssessmentPayload>) => UpdatePlanAssessmentPayload) => {
     return (dispatch: Dispatch<UpdatePlanAssessmentPayload>): UpdatePlanAssessmentPayload => {
         return dispatch(updatePlanAssessmentAction(planAssessment));
