@@ -11,5 +11,60 @@
             {"id": "Enemy Cruiser A", "damage": 0},
             {"id": "Enemy Cruiser B", "damage": 1}
         ]
+    },
+    "targetTimeConstraints": {
+        "entries":  [
+            {"id": "Enemy Carrier A", "maxSortieTimeHours": 4},
+            {"id": "Enemy Carrier B", "maxSortieTimeHours": 5},
+            {"id": "Enemy Destroyer A", "maxSortieTimeHours": 4},
+            {"id": "Enemy Destroyer B", "maxSortieTimeHours": 5},
+            {"id": "Enemy Cruiser A", "maxSortieTimeHours": 6},
+            {"id": "Enemy Cruiser B", "maxSortieTimeHours": 6}
+        ]
+    },
+    "minJetsPerSortie": 2,
+    "friendlyForces": {
+        "carriers": [
+            {
+                "id": "Friendly Carrier 1",
+                "squadrons": [
+                    {
+                        "id": "Squadron 1",
+                        "jetIds": ["Jet1", "Jet2", "Jet3", "Jet4"],
+                        "pilotIds": ["Pilot1", "Pilot2", "Pilot3", "Pilot4", "Pilot5"],
+                        "missileIds": ["Missile1", "Missile2"]
+                    },
+                    {
+                        "id": "Squadron 2",
+                        "jetIds": ["Jet5", "Jet6", "Jet7", "Jet8"],
+                        "pilotIds": ["Pilot6", "Pilot7", "Pilot8", "Pilot9", "Pilot10"],
+                        "missileIds": ["Missile3", "Missile4", "Missile5"]
+                    },
+                    {
+                        "id": "Squadron 3",
+                        "jetIds": ["Jet9", "Jet10", "Jet11"],
+                        "pilotIds": ["Pilot11", "Pilot12", "Pilot13", "Pilot14"],
+                        "missileIds": ["Missile6", "Missile7", "Missile8"]
+                    }
+                ]
+            },
+            {
+                "id": "Friendly Carrier 2",
+                "squadrons": [
+                    {
+                        "id": "Squadron 4",
+                        "jetIds": ["Jet12", "Jet13", "Jet14", "Jet15"],
+                        "pilotIds": ["Pilot15", "Pilot16", "Pilot17"],
+                        "missileIds": ["Missile9", "Missile10", "Missile11"]
+                    },
+                    {
+                        "id": "Squadron 5",
+                        "jetIds": ["Jet16", "Jet17", "Jet18", "Jet19"],
+                        "pilotIds": ["Pilot18", "Pilot19", "Pilot20", "Pilot21"],
+                        "missileIds": ["Missile12", "Missile13"]
+                    }
+                ]
+            }
+        ]
     }
 }
