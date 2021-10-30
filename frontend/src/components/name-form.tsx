@@ -154,8 +154,8 @@ export class NameForm extends React.Component<NameFormProps, NameState> {
         //this.props.updatePlanAssessment(planAssessment);
       })
       .catch((error) => {
-        const planAssessment = sampleData as newPlanAssessment;
-        this.setState({ planAssessment:planAssessment, page: page.RESULTS, loading:false })
+        //const planAssessment = sampleData as newPlanAssessment;
+        //this.setState({ planAssessment:planAssessment, page: page.RESULTS, loading:false })
         alert("Issue with calling server:" + error);
       });
   }
