@@ -49,8 +49,8 @@ def GeneratePlanAssessment(prediction, targetIds):
             })
 
             assets = action['Assets']
-            numPilots = assets[0]
-            numJets = assets[1]
+            numJets = assets[0]
+            numPilots = assets[1]
 
             numMissiles = action['Missiles']
 
